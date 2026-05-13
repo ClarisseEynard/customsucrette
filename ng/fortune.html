@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1200" />
+    <link rel="icon" href="../assets/favicon-w.png" type="image/png" />
+    <title>Roue des thèmes - NewGen - Custom Sucrette</title>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&font-display=block"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/wardrobe.css" />
+
+    <style>
+      /* ── Variables & reset ── */
+      :root {
+        --wheel-size: 520px;
+        --wheel-border: 12px;
+        --spin-duration: 4s;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: "Arvo", serif;
+        background: transparent;
+        color: #3e2918;
+      }
+
+      section.fortune-container {
+        width: 100%;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        overflow: hidden;
+        padding-left: 65px;
+        background: rgba(72, 64, 58, 0.32);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+      }
+
+      /* ── Main layout ── */
+      .fortune-main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 40px;
+        gap: 24px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .fortune-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--asng-personality-color, #eb6d7a);
+        letter-spacing: 0.5px;
+        flex-shrink: 0;
+      }
+
+      .fortune-stage {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 48px;
+        width: 100%;
+        max-width: 1100px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .fortune-result-column {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        gap: 16px;
+        flex: 0 1 400px;
+        width: 400px;
+        max-width: 400px;
+      }
+
+      /* ── Wheel wrapper ── */
+      .wheel-wrapper {
+        position: relative;
+        width: var(--wheel-size);
+        height: var(--wheel-size);
+        filter: drop-shadow(0 8px 30px rgba(0, 0, 0, 0.18));
+        flex-shrink: 0;
+      }
+
+      /* Pointer / flèche */
+      .wheel-pointer {
+        position: absolute;
+        top: -22px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 16px solid transparent;
+        border-right: 16px solid transparent;
+        border-top: 36px solid var(--asng-personality-color, #eb6d7a);
+        z-index: 10;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      }
+      .wheel-pointer::after {
+        content: "";
+        position: absolute;
+        top: -40px;
+        left: -8px;
+        width: 16px;
+        height: 12px;
+        background: var(--asng-personality-color, #eb6d7a);
+        border-radius: 4px 4px 0 0;
+      }
+
+      #wheel-canvas {
+        display: block;
+        border-radius: 50%;
+        border: var(--wheel-border) solid #fff;
+        box-shadow: 0 0 0 4px var(--asng-personality-color, #eb6d7a);
+        transition: transform 0s;
+        cursor: pointer;
+      }
+
+      #wheel-canvas.spinning {
+        cursor: default;
+      }
+
+      /* Centre de la roue */
+      .wheel-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: #fff;
+        border: 5px solid var(--asng-personality-color, #eb6d7a);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        cursor: pointer;
+        transition: transform 0.15s;
+      }
+      .wheel-center:hover {
+        transform: translate(-50%, -50%) scale(1.08);
+      }
+      .wheel-center.spinning {
+        animation: pulse 0.6s ease-in-out infinite alternate;
+        cursor: default;
+      }
+
+      @keyframes pulse {
+        from {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+      }
+
+      /* ── Bouton Tourner ── */
+      .spin-btn {
+        background: var(--asng-personality-color, #eb6d7a);
+        color: #fff;
+        border: none;
+        font-family: "Arvo", serif;
+        font-size: 18px;
+        font-weight: 700;
+        padding: 14px 48px;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s,
+          background 0.2s;
+        letter-spacing: 0.5px;
+      }
+      .spin-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+      }
+      .spin-btn:active:not(:disabled) {
+        transform: translateY(0);
+      }
+      .spin-btn:disabled {
+        opacity: 0.55;
+        cursor: default;
+        transform: none;
+      }
+
+      /* ── Carte résultat ── */
+      .result-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 6px 28px rgba(0, 0, 0, 0.12);
+        padding: 32px 40px;
+        width: 100%;
+        text-align: center;
+        opacity: 0;
+        transform: translateX(24px);
+        transition:
+          opacity 0.4s ease,
+          transform 0.4s ease;
+        pointer-events: none;
+        flex-shrink: 0;
+      }
+      .result-card.visible {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+      }
+
+      .result-card .result-emoji {
+        font-size: 52px;
+        display: block;
+        margin-bottom: 12px;
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      }
+      @keyframes popIn {
+        from {
+          transform: scale(0.3);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .result-card .result-theme {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--asng-personality-color, #eb6d7a);
+        margin-bottom: 8px;
+        line-height: 1.2;
+      }
+
+      .result-card .result-desc {
+        font-size: 14px;
+        color: #7a5a44;
+        line-height: 1.7;
+        margin-bottom: 20px;
+      }
+
+      .result-card .result-keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .result-card .keyword-tag {
+        background: #f9f3ef;
+        border: 2px solid var(--asng-personality-color, #eb6d7a);
+        color: var(--asng-personality-color-dark, #c63a5f);
+        border-radius: 50px;
+        padding: 4px 14px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .result-card .result-hint {
+        font-size: 12px;
+        color: #aaa;
+        font-style: italic;
+      }
+
+      .result-card .btn-retry {
+        background: transparent;
+        border: 2px solid var(--asng-personality-color, #eb6d7a);
+        color: var(--asng-personality-color, #eb6d7a);
+        font-family: "Arvo", serif;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 8px 24px;
+        border-radius: 50px;
+        cursor: pointer;
+        margin-top: 4px;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+      .result-card .btn-retry:hover {
+        background: var(--asng-personality-color, #eb6d7a);
+        color: #fff;
+      }
+
+      /* ── Confettis ── */
+      .confetti-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 999;
+        overflow: hidden;
+      }
+      .confetti-piece {
+        position: absolute;
+        top: -10px;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        animation: confettiFall linear forwards;
+      }
+      @keyframes confettiFall {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(110vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+
+      /* ── Historique ── */
+      .history-section {
+        width: 100%;
+      }
+      .history-section h3 {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #bbb;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      .history-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+      }
+      .history-tag {
+        background: #fff;
+        border: 1.5px solid #e8ddd7;
+        color: #7a5a44;
+        border-radius: 50px;
+        padding: 4px 14px;
+        font-size: 12px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        animation: fadeIn 0.3s ease both;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body class="">
+    <asng-root>
+      <div class="site-container">
+        <div class="asng-player-room">
+          <div class="asng-room">
+            <canvas class="asng-room-canvas" width="1920" height="1296"></canvas>
+          </div>
+        </div>
+        <div class="asng-menu">
+          <div class="ng-scrollbar">
+            <div class="ng-scrollbar-wrapper">
+              <div class="container">
+                <div class="menu-header">
+                  <div class="menu">
+                    <div class="wave">
+                      <div class="header"></div>
+                      <div class="select-wave"></div>
+                      <div class="footer"></div>
+                    </div>
+                    <div class="content">
+                      <ul>
+                        <li id="asng-menu-home">
+                          <a href="../">
+                            <div class="asng-menu-icon" icon="home">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/home.png" alt="" />
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                        <li id="asng-menu-player">
+                          <a href="wardrobe.html">
+                            <div class="asng-menu-icon" icon="profile">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/profile.png" alt="" />
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                        <li id="asng-menu-ask">
+                          <a>
+                            <div class="asng-menu-icon" icon="profile">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/message.png" alt="" />
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                        <li id="asng-menu-gallery">
+                          <a href="gallery.html">
+                            <div class="asng-menu-icon" icon="gallery">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/library.png" alt="" />
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                        <li id="asng-menu-settings">
+                          <a>
+                            <div class="asng-menu-icon" icon="settings">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/settings.png" alt="" />
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="asng-settings-panel">
+          <div class="container">
+            <div class="close-button">
+              <span class="material-symbols-outlined mat-icon">keyboard_double_arrow_left</span>
+            </div>
+            <div class="version"></div>
+            <div class="header">
+              <h1>Options</h1>
+            </div>
+            <div class="content">
+              <section class="theme">
+                <h3>Thème</h3>
+                <div class="buttons-container">
+                  <div class="personality-icon sweet">
+                    <div class="background"></div>
+                    <img src="assets/rounded-button/background.svg" class="background-shadow" />
+                    <img src="assets/profile/personality/sweet-hd.png" alt="Sweet" />
+                  </div>
+                  <div class="personality-icon lively">
+                    <div class="background"></div>
+                    <img src="assets/rounded-button/background.svg" class="background-shadow" />
+                    <img src="assets/profile/personality/lively-hd.png" alt="Lively" />
+                  </div>
+                  <div class="personality-icon fiery">
+                    <div class="background"></div>
+                    <img src="assets/rounded-button/background.svg" class="background-shadow" />
+                    <img src="assets/profile/personality/fiery-hd.png" alt="Fiery" />
+                  </div>
+                </div>
+              </section>
+              <section class="graphics">
+                <h3>Graphismes</h3>
+                <div class="quality">
+                  <h4>Qualité des images</h4>
+                  <div class="quality-options">
+                    <div class="option">
+                      <span>Icônes</span>
+                      <div class="option-picker">
+                        <div id="icon-sd" class="choice small">SD</div>
+                        <div id="icon-md" class="choice small">MD</div>
+                        <div id="icon-hd" class="choice small">HD</div>
+                      </div>
+                    </div>
+                    <div class="option">
+                      <span>Avatar/Taki</span>
+                      <div class="option-picker">
+                        <div id="canvas-sd" class="choice small">SD</div>
+                        <div id="canvas-md" class="choice small">MD</div>
+                        <div id="canvas-hd" class="choice small">HD</div>
+                      </div>
+                    </div>
+                    <div class="option">
+                      <span>Fonds</span>
+                      <div class="option-picker">
+                        <div id="room-sd" class="choice small">SD</div>
+                        <div id="room-md" class="choice small">MD</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="room">
+                  <h4>Chambre</h4>
+                  <div class="room-options">
+                    <div class="option">
+                      <span>Basculer jour/nuit</span>
+                      <div class="asng-toggle-switch alternate-time">
+                        <label class="">
+                          <div class="slider initialized"></div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="option">
+                      <span>Désactiver/Activer les effets</span>
+                      <div class="asng-toggle-switch alternate-filters">
+                        <label class="">
+                          <div class="slider initialized"></div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <section class="fortune-container">
+          <main class="fortune-main">
+            <h1 class="fortune-title">
+              Tourne la roue et laisse le hasard décider du thème du jour !
+            </h1>
+
+            <div class="fortune-stage">
+              <!-- Roue -->
+              <div class="wheel-wrapper">
+                <div class="wheel-pointer"></div>
+                <canvas id="wheel-canvas" width="520" height="520"></canvas>
+                <div class="wheel-center" id="wheel-center-btn" title="Tourner !">🎯</div>
+              </div>
+
+              <div class="fortune-result-column">
+                <!-- Carte résultat -->
+                <div class="result-card" id="result-card">
+                  <span class="result-emoji" id="result-emoji">🌟</span>
+                  <div class="result-theme" id="result-theme">–</div>
+                  <p class="result-desc" id="result-desc">–</p>
+                  <div class="result-keywords" id="result-keywords"></div>
+                  <p class="result-hint" id="result-hint"></p>
+                  <br />
+                  <button class="btn-retry" id="btn-retry">Retourner la roue</button>
+                </div>
+
+                <!-- Historique -->
+                <div class="history-section" id="history-section" style="display: none">
+                  <h3>Tirages précédents</h3>
+                  <div class="history-list" id="history-list"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bouton -->
+            <!-- <button class="spin-btn" id="spin-btn">Tourner la roue !</button> -->
+          </main>
+        </section>
+      </div>
+    </asng-root>
+
+    <!-- Confettis -->
+    <div class="confetti-container" id="confetti-container"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="../js/protocol.js"></script>
+    <script>
+      // ── Thèmes ──────────────────────────────────────────────────────────────
+      const THEMES = [
+        {
+          name: "Cottage Core",
+          emoji: "🌿",
+          desc: "Inspirée de la vie à la campagne : dentelles, fleurs séchées, teintes naturelles et tissus doux. Pense robes à volants, chapeaux de paille et tabliers brodés.",
+          keywords: ["Floral", "Lin", "Douceur", "Nature"],
+          hint: "Couleurs : beige, vert sauge, terracotta, lavande",
+        },
+        {
+          name: "Dark Academia",
+          emoji: "📚",
+          desc: "L'esthétique des bibliothèques anciennes et des grandes universités. Tweed, carreaux, couleurs sombres et tenues structurées aux allures intellectuelles.",
+          keywords: ["Tweed", "Plaid", "Oversize", "Élégance sombre"],
+          hint: "Couleurs : bordeaux, marron, noir, gris anthracite",
+        },
+        {
+          name: "Y2K Bubblegum",
+          emoji: "💿",
+          desc: "Le retour des années 2000 dans toute leur gloire plastifiée ! Brillants, imprimés holographiques, tenues crop et accessoires metallic kitsch.",
+          keywords: ["Glitter", "Crop top", "Metallique", "Néon"],
+          hint: "Couleurs : rose bonbon, argent, violet fluo, bleu électrique",
+        },
+        {
+          name: "Mermaid Core",
+          emoji: "🧜",
+          desc: "Des profondeurs de l'océan à ta garde-robe. Reflets irisés, sequins, bleus et verts profonds, matières fluides qui ondulent à chaque pas.",
+          keywords: ["Irisé", "Sequins", "Fluide", "Nacré"],
+          hint: "Couleurs : bleu marine, turquoise, corail, or",
+        },
+        {
+          name: "Fairy Kei",
+          emoji: "🧚",
+          desc: "Une explosion de pastel et de magie ! Superpositions de couches, tulle, étoiles et éléments fantaisie pour une silhouette de fée des temps modernes.",
+          keywords: ["Pastel", "Tulle", "Superpositions", "Magique"],
+          hint: "Couleurs : rose pâle, lilas, jaune crème, bleu ciel",
+        },
+        {
+          name: "Street Art",
+          emoji: "🎨",
+          desc: "La rue comme scène, la mode comme expression. Graffs et imprimés audacieux, coupes oversized, sneakers iconiques et accessoires statement.",
+          keywords: ["Oversized", "Imprimé", "Streetwear", "Statement"],
+          hint: "Couleurs : noir, rouge, orange, couleurs vives et pop",
+        },
+        {
+          name: "Romantic Vintage",
+          emoji: "🌹",
+          desc: "Une silhouette venue d'un autre siècle. Corsages brodés, jupes amples, camées, rubans et dentelles créent une tenue digne d'une héroïne de roman.",
+          keywords: ["Dentelle", "Volants", "Camée", "Corset"],
+          hint: "Couleurs : ivoire, rose poudré, bordeaux, bleu nuit",
+        },
+        {
+          name: "Space Odyssey",
+          emoji: "🚀",
+          desc: "Destination : l'infini et au-delà ! Tenues futuristes inspirées de la conquête spatiale, matières brillantes, découpes géométriques et palettes cosmiques.",
+          keywords: ["Futuriste", "Métallique", "Géométrique", "Cosmos"],
+          hint: "Couleurs : argent, noir profond, violet galaxie, blanc lunaire",
+        },
+        {
+          name: "Harajuku Lolita",
+          emoji: "🎀",
+          desc: "L'expression ultime du style japonais kawaii. Jupes bouffantes, tabliers à volants, nœuds géants et accessoires ultra-soignés pour une allure de poupée de porcelaine.",
+          keywords: ["Frills", "Nœuds", "Kawaii", "Poupée"],
+          hint: "Couleurs : blanc, noir, rose, rouge vif",
+        },
+        {
+          name: "Boho Festival",
+          emoji: "🌙",
+          desc: "Le meilleur du style festival bohème : franges, plumes, imprimés ethniques, layering de bijoux et tenues légères qui se laissent emporter par le vent.",
+          keywords: ["Franges", "Ethnique", "Bijoux layering", "Libre"],
+          hint: "Couleurs : orange brûlé, écru, rouille, mauve",
+        },
+        {
+          name: "Cyber Punk",
+          emoji: "⚡",
+          desc: "La ville néon de 2077 s'empare de ta garde-robe. Vinyle, néoprène, harnais, couleurs électriques et accessoires high-tech pour une allure de rebelle du futur.",
+          keywords: ["Vinyle", "Harnais", "Néon", "Edgy"],
+          hint: "Couleurs : noir, vert cyber, magenta, bleu électrique",
+        },
+        {
+          name: "Soft Aesthetic",
+          emoji: "🕊️",
+          desc: "La douceur à l'état pur. Pulls oversized, pantalons larges, couleurs neutres et matières cocooning pour une tenue réconfortante et photogénique.",
+          keywords: ["Oversized", "Cozy", "Neutre", "Cloud"],
+          hint: "Couleurs : blanc, crème, gris perle, rose pâle, beige",
+        },
+      ];
+
+      // ── Couleurs de la roue ──────────────────────────────────────────────────
+      const COLORS = [
+        "#eb6d7a",
+        "#f7a8ae",
+        "#fdb727",
+        "#ffd88a",
+        "#6ab571",
+        "#a8ddb0",
+        "#7b9ad1",
+        "#b3c9ee",
+        "#c47cc7",
+        "#dba8dd",
+        "#e8856a",
+        "#f4bba8",
+      ];
+
+      // ── État ─────────────────────────────────────────────────────────────────
+      const canvas = document.getElementById("wheel-canvas");
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width;
+      const H = canvas.height;
+      const CX = W / 2;
+      const CY = H / 2;
+      const R = CX - 8;
+      const N = THEMES.length;
+      const ARC = (2 * Math.PI) / N;
+
+      let currentAngle = 0; // angle de rotation courant (rad)
+      let spinning = false;
+      let history = [];
+
+      // ── Dessin de la roue ───────────────────────────────────────────────────
+      function drawWheel(angle) {
+        ctx.clearRect(0, 0, W, H);
+
+        for (let i = 0; i < N; i++) {
+          const start = angle + i * ARC;
+          const end = start + ARC;
+          const mid = start + ARC / 2;
+
+          // Secteur
+          ctx.beginPath();
+          ctx.moveTo(CX, CY);
+          ctx.arc(CX, CY, R, start, end);
+          ctx.closePath();
+          ctx.fillStyle = COLORS[i % COLORS.length];
+          ctx.fill();
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Texte
+          ctx.save();
+          ctx.translate(CX, CY);
+          ctx.rotate(mid);
+
+          // Emoji
+          ctx.font = "20px serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(THEMES[i].emoji, R * 0.75, 0);
+
+          // Nom (tronqué si trop long)
+          ctx.font = "bold 11px Arvo, serif";
+          ctx.fillStyle = "#fff";
+          ctx.shadowColor = "rgba(0,0,0,.4)";
+          ctx.shadowBlur = 3;
+          const label =
+            THEMES[i].name.length > 14 ? THEMES[i].name.substring(0, 13) + "…" : THEMES[i].name;
+          ctx.fillText(label, R * 0.42, 0);
+          ctx.shadowBlur = 0;
+
+          ctx.restore();
+        }
+      }
+
+      drawWheel(0);
+
+      // ── Index du secteur pointé ──────────────────────────────────────────────
+      // Le pointeur est en haut (angle -PI/2 dans le repère canvas)
+      function getPointedIndex(angle) {
+        // On normalise l'angle total de rotation
+        const normalized = (((-angle - Math.PI / 2) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+        return Math.floor(normalized / ARC) % N;
+      }
+
+      // ── Spin ────────────────────────────────────────────────────────────────
+      function spin() {
+        if (spinning) return;
+        spinning = true;
+
+        hideResult();
+
+        const spinBtn = document.getElementById("spin-btn");
+        if (spinBtn) spinBtn.disabled = true;
+        document.getElementById("wheel-center-btn").classList.add("spinning");
+        canvas.classList.add("spinning");
+
+        // Tours + angle aléatoire final
+        const extraSpins = 5 + Math.floor(Math.random() * 4); // 5-8 tours
+        const extraAngle = Math.random() * 2 * Math.PI; // position dans un secteur aléatoire
+        const totalRotation = extraSpins * 2 * Math.PI + extraAngle;
+        const targetAngle = currentAngle - totalRotation;
+
+        const duration = 3500 + Math.random() * 1000; // 3.5-4.5s
+        const startTime = performance.now();
+        const startAngle = currentAngle;
+
+        function easeOut(t) {
+          return 1 - Math.pow(1 - t, 4);
+        }
+
+        function animate(now) {
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed / duration, 1);
+          currentAngle = startAngle + (targetAngle - startAngle) * easeOut(t);
+          drawWheel(currentAngle);
+
+          if (t < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            currentAngle = targetAngle;
+            drawWheel(currentAngle);
+            spinning = false;
+            canvas.classList.remove("spinning");
+            document.getElementById("wheel-center-btn").classList.remove("spinning");
+            if (spinBtn) spinBtn.disabled = false;
+
+            const idx = getPointedIndex(currentAngle);
+            showResult(THEMES[idx]);
+            addToHistory(THEMES[idx]);
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      // ── Affichage du résultat ───────────────────────────────────────────────
+      function showResult(theme) {
+        document.getElementById("result-emoji").textContent = theme.emoji;
+        document.getElementById("result-theme").textContent = theme.name;
+        document.getElementById("result-desc").textContent = theme.desc;
+        document.getElementById("result-hint").textContent = theme.hint;
+
+        const kw = document.getElementById("result-keywords");
+        kw.innerHTML = "";
+        theme.keywords.forEach((k) => {
+          const tag = document.createElement("span");
+          tag.className = "keyword-tag";
+          tag.textContent = k;
+          kw.appendChild(tag);
+        });
+
+        const card = document.getElementById("result-card");
+        card.classList.add("visible");
+
+        launchConfetti();
+      }
+
+      function hideResult() {
+        document.getElementById("result-card").classList.remove("visible");
+      }
+
+      // ── Historique ──────────────────────────────────────────────────────────
+      function addToHistory(theme) {
+        history.unshift(theme);
+        if (history.length > 8) history.pop();
+
+        const section = document.getElementById("history-section");
+        const list = document.getElementById("history-list");
+
+        if (history.length > 1) {
+          section.style.display = "block";
+          // Afficher seulement les anciens (pas le 1er = actuel)
+          list.innerHTML = "";
+          history.slice(1).forEach((t) => {
+            const tag = document.createElement("span");
+            tag.className = "history-tag";
+            tag.textContent = `${t.emoji} ${t.name}`;
+            list.appendChild(tag);
+          });
+        }
+      }
+
+      // ── Confettis ───────────────────────────────────────────────────────────
+      function launchConfetti() {
+        const container = document.getElementById("confetti-container");
+        container.innerHTML = "";
+        const confettiColors = ["#eb6d7a", "#fdb727", "#6ab571", "#7b9ad1", "#c47cc7", "#f9e04b"];
+        for (let i = 0; i < 60; i++) {
+          const piece = document.createElement("div");
+          piece.className = "confetti-piece";
+          piece.style.left = Math.random() * 100 + "vw";
+          piece.style.background =
+            confettiColors[Math.floor(Math.random() * confettiColors.length)];
+          piece.style.width = 6 + Math.random() * 8 + "px";
+          piece.style.height = 6 + Math.random() * 8 + "px";
+          piece.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+          piece.style.animationDuration = 1.5 + Math.random() * 2 + "s";
+          piece.style.animationDelay = Math.random() * 0.6 + "s";
+          container.appendChild(piece);
+        }
+        setTimeout(() => (container.innerHTML = ""), 4000);
+      }
+
+      // ── Events ──────────────────────────────────────────────────────────────
+      const spinBtn = document.getElementById("spin-btn");
+      if (spinBtn) spinBtn.addEventListener("click", spin);
+      document.getElementById("wheel-center-btn").addEventListener("click", spin);
+      document.getElementById("btn-retry").addEventListener("click", () => {
+        hideResult();
+        setTimeout(spin, 300);
+      });
+
+      // Initialisation thème / menu
+      $(document).ready(function () {
+        customTheme();
+        userSettings();
+        currentPage("fortune");
+      });
+    </script>
+  </body>
+</html>

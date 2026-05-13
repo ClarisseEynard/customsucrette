@@ -1,220 +1,242 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=1200">
-    <meta name="mobile-web-app-capable" content="yes">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1200" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta property="og:image" content="../assets/meta/image.png" />
-    <meta property="og:description" content="Dressing en ligne et gratuit basé sur Amour Sucré. Fait par et pour les fans." />
+    <meta
+      property="og:description"
+      content="Dressing en ligne et gratuit basé sur Amour Sucré. Fait par et pour les fans."
+    />
 
-    <link rel="icon" href="../assets/favicon-w.png" type="image/png">
+    <link rel="icon" href="../assets/favicon-w.png" type="image/png" />
     <title>Galerie - NewGen - Custom Sucrette</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&font-display=block" />
-    <link rel="stylesheet" href="styles/wardrobe.css">
-    <link rel="stylesheet" href="styles/gallery.css">
-</head>
-<body class="">
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&font-display=block"
+    />
+    <link rel="stylesheet" href="styles/wardrobe.css" />
+    <link rel="stylesheet" href="styles/gallery.css" />
+  </head>
+  <body class="">
     <asng-root>
-        <div class="site-container">
-            <div class="asng-player-room">
-                <div class="asng-room">
-                    <canvas class="asng-room-canvas" width="1920" height="1296"></canvas>
-                </div>
-            </div>
-            <div class="asng-menu">
-                <div class="ng-scrollbar">
-                    <div class="ng-scrollbar-wrapper">
-                        <div class="container">
-                            <div class="menu-header">
-                                <div class="menu">
-                                    <div class="wave">
-                                        <div class="header"></div>
-                                        <div class="select-wave"></div>
-                                        <div class="footer"></div>
-                                    </div>
-                                    <div class="content">
-                                        <ul>
-                                            <li id="asng-menu-home">
-                                                <a href="../">
-                                                    <div class="asng-menu-icon" icon="home">
-                                                        <div class="asng-lottie-player">
-                                                            <div class="lottie-player" background="transparent">
-                                                                <img src="assets/menu/home.png" alt="">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li id="asng-menu-player">
-                                                <a href="wardrobe.html">
-                                                    <div class="asng-menu-icon" icon="profile">
-                                                        <div class="asng-lottie-player">
-                                                            <div class="lottie-player" background="transparent">
-                                                                <img src="assets/menu/profile.png" alt="">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li id="asng-menu-ask">
-                                                <a href="https://znfaq.tumblr.com/ask" target="_blank">
-                                                    <div class="asng-menu-icon" icon="profile">
-                                                        <div class="asng-lottie-player">
-                                                            <div class="lottie-player" background="transparent">
-                                                                <img src="assets/menu/message.png" alt="">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li id="asng-menu-gallery">
-                                                <a>
-                                                    <div class="asng-menu-icon" icon="gallery">
-                                                        <div class="asng-lottie-player">
-                                                            <div class="lottie-player" background="transparent">
-                                                                <img src="assets/menu/library.png" alt="">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li id="asng-menu-settings">
-                                                <a>
-                                                    <div class="asng-menu-icon" icon="settings">
-                                                        <div class="asng-lottie-player">
-                                                            <div class="lottie-player" background="transparent">
-                                                                <img src="assets/menu/settings.png" alt="">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="asng-settings-panel">
-                <div class="container">
-                    <div class="close-button">
-                        <span class="material-symbols-outlined mat-icon">keyboard_double_arrow_left</span>
-                    </div>
-                    <div class="version"></div>
-                    <div class="header">
-                        <h1>Options</h1>
+      <div class="site-container">
+        <div class="asng-player-room">
+          <div class="asng-room">
+            <canvas class="asng-room-canvas" width="1920" height="1296"></canvas>
+          </div>
+        </div>
+        <div class="asng-menu">
+          <div class="ng-scrollbar">
+            <div class="ng-scrollbar-wrapper">
+              <div class="container">
+                <div class="menu-header">
+                  <div class="menu">
+                    <div class="wave">
+                      <div class="header"></div>
+                      <div class="select-wave"></div>
+                      <div class="footer"></div>
                     </div>
                     <div class="content">
-                        <section class="theme">
-                            <h3>Thème</h3>
-                            <div class="buttons-container">
-                                <div class="personality-icon sweet">
-                                    <div class="background"></div>
-                                    <img src="assets/rounded-button/background.svg" class="background-shadow">
-                                    <img src="assets/profile/personality/sweet-hd.png" alt="Sweet">
+                      <ul>
+                        <li id="asng-menu-home">
+                          <a href="../">
+                            <div class="asng-menu-icon" icon="home">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/home.png" alt="" />
                                 </div>
-                                <div class="personality-icon lively">
-                                    <div class="background"></div>
-                                    <img src="assets/rounded-button/background.svg" class="background-shadow">
-                                    <img src="assets/profile/personality/lively-hd.png" alt="Lively">
-                                </div>
-                                <div class="personality-icon fiery">
-                                    <div class="background"></div>
-                                    <img src="assets/rounded-button/background.svg" class="background-shadow">
-                                    <img src="assets/profile/personality/fiery-hd.png" alt="Fiery">
-                                </div>
+                              </div>
                             </div>
-                        </section>
-                        <section class="graphics">
-                            <h3>Graphismes</h3>
-                            <div class="quality">
-                                <h4>Qualité des images</h4>
-                                <div class="quality-options">
-                                    <div class="option">
-                                        <span>Icônes</span>
-                                        <div class="option-picker">
-                                            <div id="icon-sd" class="choice small"> SD </div>
-                                            <div id="icon-md" class="choice small"> MD </div>
-                                            <div id="icon-hd" class="choice small"> HD </div>
-                                        </div>
-                                    </div>
-                                    <div class="option">
-                                        <span>Avatar/Taki</span>
-                                        <div class="option-picker">
-                                            <div id="canvas-sd" class="choice small"> SD </div>
-                                            <div id="canvas-md" class="choice small"> MD </div>
-                                            <div id="canvas-hd" class="choice small"> HD </div>
-                                        </div>
-                                    </div>
-                                    <div class="option">
-                                        <span>Fonds</span>
-                                        <div class="option-picker">
-                                            <div id="room-sd" class="choice small"> SD </div>
-                                            <div id="room-md" class="choice small"> MD </div>
-                                        </div>
-                                    </div>
+                          </a>
+                        </li>
+                        <li id="asng-menu-player">
+                          <a href="wardrobe.html">
+                            <div class="asng-menu-icon" icon="profile">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/profile.png" alt="" />
                                 </div>
+                              </div>
                             </div>
-
-                            <div class="room">
-                                <h4>Chambre</h4>
-                                <div class="room-options">
-                                    <div class="option">
-                                        <span>Basculer jour/nuit</span>
-                                        <div class="asng-toggle-switch alternate-time">
-                                            <label class="">
-                                                <div class="slider initialized"></div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="option">
-                                        <span>Désactiver/Activer les effets</span>
-                                        <div class="asng-toggle-switch alternate-filters">
-                                            <label class="">
-                                                <div class="slider initialized"></div>
-                                            </label>
-                                        </div>
-                                    </div>
+                          </a>
+                        </li>
+                        <li id="asng-menu-ask">
+                          <a href="fortune.html">
+                            <div class="asng-menu-icon" icon="profile">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/message.png" alt="" />
                                 </div>
+                              </div>
                             </div>
-                        </section>
-                        <section class="code">
-                            <h3>Charger Sucrette</h3>
-                            <form class="code-input" onsubmit="saveTempCode(); return false;">
-                                <input type="text" name="code" id="load-code" placeholder="COLLER LE CODE DE CHARGEMENT">
-                            </form>
-                        </section>
+                          </a>
+                        </li>
+                        <li id="asng-menu-gallery">
+                          <a>
+                            <div class="asng-menu-icon" icon="gallery">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/library.png" alt="" />
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                        <li id="asng-menu-settings">
+                          <a>
+                            <div class="asng-menu-icon" icon="settings">
+                              <div class="asng-lottie-player">
+                                <div class="lottie-player" background="transparent">
+                                  <img src="assets/menu/settings.png" alt="" />
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                      </ul>
                     </div>
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="asng-settings-panel">
+          <div class="container">
+            <div class="close-button">
+              <span class="material-symbols-outlined mat-icon">keyboard_double_arrow_left</span>
+            </div>
+            <div class="version"></div>
+            <div class="header">
+              <h1>Options</h1>
+            </div>
+            <div class="content">
+              <section class="theme">
+                <h3>Thème</h3>
+                <div class="buttons-container">
+                  <div class="personality-icon sweet">
+                    <div class="background"></div>
+                    <img src="assets/rounded-button/background.svg" class="background-shadow" />
+                    <img src="assets/profile/personality/sweet-hd.png" alt="Sweet" />
+                  </div>
+                  <div class="personality-icon lively">
+                    <div class="background"></div>
+                    <img src="assets/rounded-button/background.svg" class="background-shadow" />
+                    <img src="assets/profile/personality/lively-hd.png" alt="Lively" />
+                  </div>
+                  <div class="personality-icon fiery">
+                    <div class="background"></div>
+                    <img src="assets/rounded-button/background.svg" class="background-shadow" />
+                    <img src="assets/profile/personality/fiery-hd.png" alt="Fiery" />
+                  </div>
+                </div>
+              </section>
+              <section class="graphics">
+                <h3>Graphismes</h3>
+                <div class="quality">
+                  <h4>Qualité des images</h4>
+                  <div class="quality-options">
+                    <div class="option">
+                      <span>Icônes</span>
+                      <div class="option-picker">
+                        <div id="icon-sd" class="choice small">SD</div>
+                        <div id="icon-md" class="choice small">MD</div>
+                        <div id="icon-hd" class="choice small">HD</div>
+                      </div>
+                    </div>
+                    <div class="option">
+                      <span>Avatar/Taki</span>
+                      <div class="option-picker">
+                        <div id="canvas-sd" class="choice small">SD</div>
+                        <div id="canvas-md" class="choice small">MD</div>
+                        <div id="canvas-hd" class="choice small">HD</div>
+                      </div>
+                    </div>
+                    <div class="option">
+                      <span>Fonds</span>
+                      <div class="option-picker">
+                        <div id="room-sd" class="choice small">SD</div>
+                        <div id="room-md" class="choice small">MD</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="room">
+                  <h4>Chambre</h4>
+                  <div class="room-options">
+                    <div class="option">
+                      <span>Basculer jour/nuit</span>
+                      <div class="asng-toggle-switch alternate-time">
+                        <label class="">
+                          <div class="slider initialized"></div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="option">
+                      <span>Désactiver/Activer les effets</span>
+                      <div class="asng-toggle-switch alternate-filters">
+                        <label class="">
+                          <div class="slider initialized"></div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="code">
+                <h3>Charger Sucrette</h3>
+                <form
+                  class="code-input"
+                  onsubmit="
+                    saveTempCode();
+                    return false;
+                  "
+                >
+                  <input
+                    type="text"
+                    name="code"
+                    id="load-code"
+                    placeholder="COLLER LE CODE DE CHARGEMENT"
+                  />
+                </form>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <section class="cs-gallery-container">
+          <div id="logo">
+            <img src="assets/logo-ng.png" />
+          </div>
+
+          <div id="gallery-menu">
+            <div class="gallery-filter">
+              <select name="Version" id="filter-version">
+                <option value="all">Tout voir</option>
+                <option value="V1">V1 - Lycée</option>
+                <option value="V2">V2 - Université / Amour</option>
+                <option value="NG">NG - NewGen</option>
+              </select>
             </div>
 
-            <section class="cs-gallery-container">            
-                <div id="logo">
-                    <img src="assets/logo-ng.png">
-                </div>
+            <div class="gallery-submit">
+              <a href="https://custom-gallery.tumblr.com/submit" target="_blank">
+                <div class="gallery-submit-button">Envoyer une contribution</div>
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </a>
+            </div>
+            <div class="gallery-alternative">
+              <a href="https://custom-gallery.tumblr.com/tagged/submission" target="_blank">
+                <div class="gallery-submit-button">Voir sur Tumblr</div>
+              </a>
+            </div>
+          </div>
 
-                <div id="gallery-menu">
-                    <div class="gallery-filter">
-                        <select name="Version" id="filter-version">
-                            <option value="all">Tout voir</option>
-                            <option value="V1">V1 - Lycée</option>
-                            <option value="V2">V2 - Université / Amour</option>
-                            <option value="NG">NG - NewGen</option>
-                        </select>
-                    </div>
-
-                    <div class="gallery-submit"><a href="https://custom-gallery.tumblr.com/submit" target="_blank">
-                        <div class="gallery-submit-button">Envoyer une contribution</div><span class="material-symbols-outlined">arrow_forward</span>
-                    </a></div>
-                    <div class="gallery-alternative"><a href="https://custom-gallery.tumblr.com/tagged/submission" target="_blank">
-                        <div class="gallery-submit-button">Voir sur Tumblr</div>
-                    </a></div>
-                </div>
-
-                <!-- <div id="wip-layout">
+          <!-- <div id="wip-layout">
                     <div id="wip-popup">
                         <h2>Zone en construction !</h2>
                         <p>Cette section n'est pas encore terminée.<br>
@@ -223,23 +245,26 @@
                     </div>
                 </div> -->
 
-                <div class="cs-gallery-content"></div>
-                <div class="pagination">
-                    <div class="pages">
-                        <div id="page-back" class="page disabled"><span class="material-symbols-outlined">keyboard_arrow_left</span></div>
-                        <div id="page-info" data-current="0">1</div>
-                        <div id="page-next" class="page"><span class="material-symbols-outlined">keyboard_arrow_right</span></div>
-                    </div>
-                </div>
-            </section>
-
-        </div>
+          <div class="cs-gallery-content"></div>
+          <div class="pagination">
+            <div class="pages">
+              <div id="page-back" class="page disabled">
+                <span class="material-symbols-outlined">keyboard_arrow_left</span>
+              </div>
+              <div id="page-info" data-current="0">1</div>
+              <div id="page-next" class="page">
+                <span class="material-symbols-outlined">keyboard_arrow_right</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </asng-root>
 
     <div id="image-layout"></div>
 
     <div id="loading-layout" class="">
-        <img class="spinner" src="./assets/loading.png" alt="">
+      <img class="spinner" src="./assets/loading.png" alt="" />
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -248,5 +273,5 @@
     <script src="../js/season-codes.js"></script>
     <script src="../js/normalize.js"></script>
     <script src="js/gallery.js"></script>
-</body>
+  </body>
 </html>

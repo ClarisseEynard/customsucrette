@@ -9,6 +9,9 @@ function currentPage(name) {
     } else if (name == "gallery") {
         $(".asng-menu .menu .wave .header").css("height", "276px");
         $("#asng-menu-gallery").addClass("force-active");
+    } else if (name == "fortune") {
+        $(".asng-menu .menu .wave .header").css("height", "206px");
+        $("#asng-menu-ask").addClass("force-active");
     } else if(name == "tracker") {
         $(".asng-menu .menu .wave .header").css("height", "346px");
         $("#asng-menu-tracker").addClass("force-active");

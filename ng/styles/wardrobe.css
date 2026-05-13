@@ -932,9 +932,10 @@ asng-category-list, asng-crush-list {
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     text-align: center;
-    padding: 0 20px 0 70px;
+    padding: 16px 20px 16px 70px;
+    overflow-y: auto;
 
     position: absolute;
     top: 0;
@@ -966,13 +967,15 @@ asng-category-list, asng-crush-list {
 
 .left-panel-container .asng-filters .filters-panel {
     width: 100%;
-    max-height: 510px;
+    max-height: none;
     position: relative;
     z-index: 2;
-    padding: 20px 5px;
+    margin-top: 44px;
+    padding: 20px 5px 24px;
     height: auto;
     left: -470px;
     transition: left 400ms;
+    overflow: visible;
 }
 
 .left-panel-container .asng-filters.active .filters-panel {
@@ -1149,13 +1152,23 @@ asng-category-list, asng-crush-list {
     position: relative;
 }
 
-.filters-panel .colors {
-    padding: 0 25px;
-    height: 106px;
-    display: none;
+.left-panel-container .filters-panel .colors {
+    padding: 0 25px 8px;
+    height: auto;
+    display: block;
 }
 
-.filters-panel .colors .color {
+.left-panel-container .filters-panel .colors .color-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.left-panel-container .filters-panel .colors .color-row-last {
+    justify-content: center;
+}
+
+.left-panel-container .filters-panel .colors .color {
     display: inline-block;
     width: 30px;
     height: 30px;
@@ -1167,7 +1180,7 @@ asng-category-list, asng-crush-list {
     background: linear-gradient(-115deg, yellow, black, yellow, black, yellow, black, yellow, black);
 }
 
-.filters-panel .colors .color:after {
+.left-panel-container .filters-panel .colors .color:after {
     content: "";
     pointer-events: none;
     position: absolute;
@@ -1182,27 +1195,29 @@ asng-category-list, asng-crush-list {
     transition: all .3s;
 }
 
-.filters-panel .colors .color.active {
+.left-panel-container .filters-panel .colors .color.active {
     border-color: #fff;
 }
 
-.filters-panel .colors .color.active:after {
+.left-panel-container .filters-panel .colors .color.active:after {
     opacity: 1;
     transform: scale(1);
 }
 
-.filters-panel .colors .color.black { background: black; }
-.filters-panel .colors .color.blue { background: #2845bb; }
-.filters-panel .colors .color.brown { background: #9a471c; }
-.filters-panel .colors .color.green { background: #308f2d; }
-.filters-panel .colors .color.grey { background: #929292; }
-.filters-panel .colors .color.orange { background: #ff9211; }
-.filters-panel .colors .color.pink { background: #ed6d7b; }
-.filters-panel .colors .color.purple { background: #b25aca; }
-.filters-panel .colors .color.red { background: #df2626; }
-.filters-panel .colors .color.white { background: white; }
-.filters-panel .colors .color.yellow { background: #ffe558; }
-.filters-panel .colors .color.multi { background: url(../assets/personalization/filters/multicolor.png); }
+.left-panel-container .filters-panel .colors .color.black { background: black; }
+.left-panel-container .filters-panel .colors .color.blue { background: #2845bb; }
+.left-panel-container .filters-panel .colors .color.brown { background: #9a471c; }
+.left-panel-container .filters-panel .colors .color.green { background: #308f2d; }
+.left-panel-container .filters-panel .colors .color.grey { background: #929292; }
+.left-panel-container .filters-panel .colors .color.orange { background: #ff9211; }
+.left-panel-container .filters-panel .colors .color.pink { background: #ed6d7b; }
+.left-panel-container .filters-panel .colors .color.purple { background: #b25aca; }
+.left-panel-container .filters-panel .colors .color.red { background: #df2626; }
+.left-panel-container .filters-panel .colors .color.white { background: white; }
+.left-panel-container .filters-panel .colors .color.yellow { background: #ffe558; }
+.left-panel-container .filters-panel .colors .color.golden { background: linear-gradient(135deg, #f5d76e 0%, #c9a227 45%, #f0e68c 100%); }
+.left-panel-container .filters-panel .colors .color.silver { background: linear-gradient(135deg, #e8e8e8 0%, #a8a8a8 50%, #f5f5f5 100%); }
+.left-panel-container .filters-panel .colors .color.multi { background: linear-gradient(90deg, #e40303, #ff8c00, #ffed00, #008026, #004dff, #750787); }
 
 .filters-panel .bottom {
     position: relative;
@@ -1218,6 +1233,11 @@ asng-category-list, asng-crush-list {
     color: var(--asng-personality-color-dark);
     font-size: 16px;
     opacity: 0;
+    transition: opacity .2s;
+}
+
+.bottom .filter-error.visible {
+    opacity: 1;
 }
 
 .filter-by-room-name {

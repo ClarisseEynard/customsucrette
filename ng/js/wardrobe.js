@@ -14,6 +14,7 @@ $(document).ready(function() {
                         customTheme();
                         userSettings();
                         clearInputFilter();
+                        clearColorFilter();
                         drawCategory();
                         fillCounter();
                         updateVWVH();
@@ -70,11 +71,30 @@ async function codeUpdate() {
     drawPet();
 }
 
+function getActiveFilterColor() {
+    return $('.filters-panel .colors .color.active').data("color") || null;
+}
+
+function itemHasColor(item, color) {
+    return item.variations.some(v => v.colors && v.colors.includes(color));
+}
+
+function getMatchingVariations(item, color) {
+    if (!color) return item.variations;
+    return item.variations.filter(v => v.colors && v.colors.includes(color));
+}
+
+function updateFilterError(lista, search, filterType, filterColor) {
+    const hasFilters = search !== "" || filterType != null || filterColor != null;
+    $(".filters-panel .filter-error").toggleClass("visible", lista.length === 0 && hasFilters);
+}
+
 async function drawCategory(c = "top", declination = null) {
     
     // filters ?
     let search = $(".filter-by-name-input input").val().trim();
     let filterType = $('.filter-by-type .type.active').length == 1 ? $('.filter-by-type .type.active').data("type") : null;
+    let filterColor = getActiveFilterColor();
 
     let lista = [], type = "cloth";
     if (search != "") {
@@ -103,6 +123,12 @@ async function drawCategory(c = "top", declination = null) {
         lista = lista.filter(v => {return v.criteria != null && v.criteria.type == filterType});
     };
 
+    if (filterColor != null) {
+        lista = lista.filter(v => itemHasColor(v, filterColor));
+    };
+
+    updateFilterError(lista, search, filterType, filterColor);
+
     if (lista.length > 0) {
 
         $("asng-cloth-list-panel .empty").remove();
@@ -126,13 +152,17 @@ async function drawCategory(c = "top", declination = null) {
                     };
 
                 if (lista[i].variations.length > 1) {
-                    $("#asng-avatar-item-list-panel .items-container").append(`<div class="asng-cloth grouped" data-category="${lista[i].category}" data-item="${lista[i].groupId}-${lista[i].variations[0].id}"></div>`);
+                    let matchedVariations = getMatchingVariations(lista[i], filterColor);
+                    let showVar = matchedVariations[0];
+                    let variationCount = filterColor ? matchedVariations.length : lista[i].variations.length;
+
+                    $("#asng-avatar-item-list-panel .items-container").append(`<div class="asng-cloth grouped" data-category="${lista[i].category}" data-item="${lista[i].groupId}-${showVar.id}"></div>`);
                     $(".asng-cloth").eq(i)
                     .append('<img src="assets/personalization/hanger.png" class="hanger" />')
                     .append('<div class="group" tooltipplacement="bottom" tooltippanelclass="asng-dressing-item-tooltip"></div>');
                     $(".asng-cloth").eq(i).find('div')
-                    .append(`<img class="thumbnail" alt="${lista[i].name}" title="${lista[i].outfitName != null ? lista[i].outfitName : ""}" src="${composeHangerUrl(lista[i].variations[0].id, lista[i].security, type)}">`)
-                    .append(`<div class="counter">${lista[i].variations.length}</div>`);
+                    .append(`<img class="thumbnail" alt="${lista[i].name}" title="${lista[i].outfitName != null ? lista[i].outfitName : ""}" src="${composeHangerUrl(showVar.id, lista[i].security, type)}">`)
+                    .append(`<div class="counter">${variationCount}</div>`);
 
                     if (lista[i].criteria != null) drawItemIcons(lista[i].criteria, $(".asng-cloth").eq(i).find('div').not(".counter"));
 
@@ -172,14 +202,15 @@ async function drawCategory(c = "top", declination = null) {
                 // pendiente
             }
 
-            let filas = Math.ceil((d[0].variations.length + 1) / 3); // Filas totales
+            let declinationVariations = getMatchingVariations(d[0], filterColor);
+            let filas = Math.ceil((declinationVariations.length + 1) / 3); // Filas totales
             $(".declinations-list-container").attr("style", `height: calc(140px * ${filas})`);
     
-            for (x = 0; x < d[0].variations.length; x++) {
-                $('.declinations-panel').append(`<div class="asng-cloth item" data-category="${c}" data-item="${d[0].groupId}-${d[0].variations[x].id}"></div>`);
+            for (x = 0; x < declinationVariations.length; x++) {
+                $('.declinations-panel').append(`<div class="asng-cloth item" data-category="${c}" data-item="${d[0].groupId}-${declinationVariations[x].id}"></div>`);
 
                 // Comprobar si está equipado
-                let A = `${d[0].variations[x].id}-${d[0].security}`;
+                let A = `${declinationVariations[x].id}-${d[0].security}`;
                 let E = sucrette.orderInfo.filter(v => {return v.value == A});
                 if (c == "skin") c = "customSkin";
                 (E.length > 0) ? E = " equipped" : (sucrette.avatar[c] == A) ? E = " equipped" : E = "";
@@ -190,7 +221,7 @@ async function drawCategory(c = "top", declination = null) {
                 $('.declinations-panel .asng-cloth .item').eq(x)
                     .append('<div tooltipplacement="bottom" tooltippanelclass="asng-dressing-item-tooltip"></div>');
                 $('.declinations-panel .asng-cloth .item').eq(x).find('div').not('.item-outline')
-                    .append(`<img class="thumbnail" alt="${d[0].name}" title="${(d[0].outfitName != null ? d[0].outfitName : "")}" src="${composeHangerUrl(d[0].variations[x].id, d[0].security, type)}">`);
+                    .append(`<img class="thumbnail" alt="${d[0].name}" title="${(d[0].outfitName != null ? d[0].outfitName : "")}" src="${composeHangerUrl(declinationVariations[x].id, d[0].security, type)}">`);
             };
         }
     
@@ -1230,6 +1261,10 @@ function clearInputFilter() {
     $(".filter-by-name-input .reset").removeAttr("style");
 };
 
+function clearColorFilter() {
+    $(".filters-panel .colors .color").removeClass("active");
+};
+
 $(function () {
 
     $(".category-list-current-category").click(function() {
@@ -1295,6 +1330,18 @@ $(function () {
             $(".filter-by-type .type").removeClass("active");
         } else {
             $(".filter-by-type .type").removeClass("active");
+            $(this).addClass("active");
+        };
+        let c = $(".category-list-item.current").length == 1 ? $(".category-list-item.current").data("category") : "top";
+        drawCategory(c);
+    });
+
+    $(".filters-panel .colors .color").click(function () {
+
+        if ($(this).attr("class").includes("active")) {
+            $(".filters-panel .colors .color").removeClass("active");
+        } else {
+            $(".filters-panel .colors .color").removeClass("active");
             $(this).addClass("active");
         };
         let c = $(".category-list-item.current").length == 1 ? $(".category-list-item.current").data("category") : "top";
