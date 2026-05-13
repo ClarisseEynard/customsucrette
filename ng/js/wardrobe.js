@@ -1,3 +1,74 @@
+const GALLERY_WORKER_URL = "https://cs-gallery.clarisse-eynard.workers.dev";
+
+function openSaveOutfitPopup() {
+    const savedName = window.localStorage.getItem("galleryPseudo") || "";
+    const savedMessage = window.localStorage.getItem("galleryMessage") || "";
+
+    $("#save-outfit-name").val(savedName);
+    $("#save-outfit-message").val(savedMessage);
+    try {
+        $("#save-outfit-code").val(typeof generateCode === "function" ? generateCode("ng") : "");
+    } catch {
+        $("#save-outfit-code").val("");
+    }
+    $("#save-outfit-error").text("");
+    $("#save-outfit-overlay").addClass("active").css("display", "flex");
+}
+
+function closeSaveOutfitPopup() {
+    $("#save-outfit-overlay").removeClass("active").css("display", "none");
+    $("#save-outfit-error").text("");
+}
+
+async function submitSaveOutfit() {
+    const pseudo = $("#save-outfit-name").val().trim();
+    const code = $("#save-outfit-code").val().trim();
+    const message = $("#save-outfit-message").val().trim();
+
+    if (!pseudo || !code) {
+        $("#save-outfit-error").text("Merci de renseigner au moins le nom et le code.");
+        return;
+    }
+
+    $("#save-outfit-confirm-btn").prop("disabled", true).text("Sauvegarde...");
+
+    try {
+        const res = await fetch(`${GALLERY_WORKER_URL}/submit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pseudo, code, message }),
+        });
+
+        const text = await res.text();
+        let data = {};
+        try {
+            data = text ? JSON.parse(text) : {};
+        } catch {
+            throw new Error(`Réponse invalide du serveur (${res.status}).`);
+        }
+
+        if (!res.ok) {
+            $("#save-outfit-error").text(data.error || `Erreur serveur (${res.status}).`);
+            return;
+        }
+
+        window.localStorage.setItem("galleryPseudo", pseudo);
+        window.localStorage.setItem("galleryMessage", message);
+        closeSaveOutfitPopup();
+        alert("Tenue sauvegardée dans la galerie !");
+    } catch (e) {
+        $("#save-outfit-error").text(
+            e.message?.includes("Failed to fetch")
+                ? "Connexion au serveur impossible. Réessaie plus tard."
+                : e.message || "Erreur de connexion.",
+        );
+    } finally {
+        $("#save-outfit-confirm-btn")
+            .prop("disabled", false)
+            .html('<span class="material-symbols-outlined">save</span> Sauvegarder');
+    }
+}
+
 $(document).ready(function() {
     $.get("./data/cloth.json", dbCloth => {
         $.get("./data/avatar.json", dbAvatar => {
@@ -945,32 +1016,10 @@ function resetSucrette() {
     drawZIndex();
 }
 
-function drawSavePopUp(w, h) {
-    let type = (w == 1200) ? "fullbody" : (h == 1080) ? "face" : "background";
-    if ($("#save-canvas").length == 0) {
-        $("body").append(`<div id="overlay-popup"><div id="canvas-container"><canvas width="${w}" height="${h}" id="save-canvas" style="background-color:${colorPicker};"></canvas></div></div>`);
-        $("#canvas-container").append(`<div class="button close"><span class="material-symbols-outlined">close</span></div>`);
-        $("#canvas-container").append(`<div class="button reload"><span class="material-symbols-outlined">refresh</span></div>`);
-        if (type != "background") {
-            $("#canvas-container").append(`
-                <div class="button bg-settings" style="background-color:${colorPicker};">
-                    <input type="color" value="${colorPicker}" id="color-picker">
-                    <label for="color-picker"><span class="material-symbols-outlined">palette</span></label>
-                </div>`);
-            $("#canvas-container").append(`<div class="button portrait"><span class="material-symbols-outlined">person</span></div>`);
-            $("#canvas-container").append(`<div class="button fullbody"><span class="material-symbols-outlined">boy</span></div>`);
-            $("#canvas-container").append(`<div class="button code"><span class="material-symbols-outlined">code</span></div>`);
-        };
-
-    } else {
-        $("#save-canvas").attr("width", w).attr("height", h);
-    };
-
-    (w == 1200) ? drawSucrette("hd", "load") : (h == 1080) ? drawSucrette("md", "load") : drawBackgroundPopUp();
-    // NORMAL -> 1200x1550
-    // BIG -> 1920x1080
-    // ROOM -> 1920x1296
-};
+function drawSavePopUp() {
+    $("#overlay-popup").remove();
+    openSaveOutfitPopup();
+}
 
 // ROOM FUNCTIONS!
 function drawRoomItems(c = "background") {
@@ -1726,16 +1775,20 @@ $(function () {
         };
     });
 
-    $(".asng-personalization-view .save").click(function() {
-        if ($(".room-panel").length == 0) {
-            // drawSucrette
-            drawSavePopUp(1200, 1550);
-        } else {
-            // drawRoom
-            drawSavePopUp(1920, 1296);
-        }
-        
+    $(".asng-personalization-view .save")
+        .off("click.saveOutfit")
+        .on("click.saveOutfit", function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $("#overlay-popup").remove();
+            openSaveOutfitPopup();
+        });
+
+    $("#save-outfit-overlay").on("click", function(e) {
+        if (e.target === this) closeSaveOutfitPopup();
     });
+    $("#save-outfit-cancel-btn").on("click", closeSaveOutfitPopup);
+    $("#save-outfit-confirm-btn").on("click", submitSaveOutfit);
 
     $('body').on("click", "#canvas-container .close", function() {
         $("#overlay-popup").remove();

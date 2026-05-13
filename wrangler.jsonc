@@ -1,8 +1,0 @@
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "cs-gallery",
-  "main": "worker.js",
-  "compatibility_date": "2024-11-01"
-  // Secrets / variables à configurer dans le dashboard Cloudflare (Settings → Variables) :
-  //   GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, ALLOWED_ORIGIN
-}

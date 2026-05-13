@@ -19,6 +19,7 @@ $(document).ready(() => {
   customTheme();
   userSettings();
   currentPage("gallery");
+  initGalleryPreview();
   loadGallery();
 
   $(document).on("click", "#btn-submit-outfit", function (e) {
@@ -74,10 +75,9 @@ const loadGallery = async (page = 1) => {
 
   try {
     const res = await fetch(`${WORKER_URL}/outfits?page=${page}`);
+    const data = await parseJsonResponse(res);
 
-    if (!res.ok) throw new Error("Erreur réseau");
-
-    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Erreur serveur (${res.status})`);
 
     currentPageNum = page;
     totalPages = data.totalPages || 1;
@@ -101,26 +101,26 @@ const renderOutfits = (outfits) => {
     return;
   }
 
-  outfits.forEach((outfit) => {
-    const date = new Date(outfit.date).toLocaleDateString("es-ES");
+  outfits.forEach((outfit, index) => {
+    const date = new Date(outfit.date).toLocaleDateString("fr-FR");
     const card = `
             <div class="post-container outfit-card">
                 <div class="post-content">
-                    <div class="author-info">enviado por <strong>${escapeHtml(outfit.pseudo)}</strong></div>
+                    <div class="author-info">partagé par <strong>${escapeHtml(outfit.pseudo)}</strong></div>
                     <div class="outfit-preview">
-                        <div class="outfit-code-display">${escapeHtml(outfit.code)}</div>
+                        <canvas class="outfit-preview-canvas" width="560" height="400" data-code="${escapeHtml(outfit.code)}" aria-label="Aperçu de la tenue"></canvas>
                     </div>
                     <div class="outfit-footer">
                         <span class="outfit-date">${date}</span>
                         <button class="load-outfit-btn" data-code="${escapeHtml(outfit.code)}">
                             <span class="material-symbols-outlined">checkroom</span>
-                            Cargar tenue
+                            Charger tenue
                         </button>
                     </div>
                     ${
                       outfit.message
                         ? `
-                        <div class="post-found-message" title="Ver mensaje">
+                        <div class="post-found-message" title="Voir le message">
                             <span class="material-symbols-outlined">chat</span>
                         </div>
                         <div class="author-message hidden">${escapeHtml(outfit.message)}</div>
@@ -130,6 +130,11 @@ const renderOutfits = (outfits) => {
                 </div>
             </div>`;
     $(".cs-gallery-content").append(card);
+
+    const canvas = $(".cs-gallery-content .outfit-preview-canvas").eq(index)[0];
+    if (canvas) {
+      renderCardPreview(canvas, outfit.code).catch((e) => console.warn("Preview:", e));
+    }
   });
 };
 
@@ -150,6 +155,16 @@ const updatePagination = () => {
 
 // ─── Soumettre une tenue ──────────────────────────────────────────────────────
 
+const parseJsonResponse = async (res) => {
+  const text = await res.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`Réponse invalide du serveur (${res.status}).`);
+  }
+};
+
 const submitOutfit = async () => {
   const pseudo = $("#submit-pseudo").val().trim();
   const code = $("#submit-code").val().trim();
@@ -169,25 +184,29 @@ const submitOutfit = async () => {
       body: JSON.stringify({ pseudo, code, message }),
     });
 
-    const data = await res.json();
+    const data = await parseJsonResponse(res);
 
     if (!res.ok) {
-      showSubmitError(data.error || "Erreur lors de la publication. Réessaie.");
+      showSubmitError(data.error || `Erreur serveur (${res.status}).`);
       return;
     }
 
-    // Succès
     $("#submit-pseudo").val("");
     $("#submit-code").val("");
     $("#submit-message").val("");
     $("#submit-error").text("");
     closeSubmitPopup();
     showSuccessToast("Tenue publiée ! 🎉");
-
-    // Recharger la première page
+    if (pseudo) window.localStorage.setItem("galleryPseudo", pseudo);
+    if (message) window.localStorage.setItem("galleryMessage", message);
     loadGallery(1);
   } catch (e) {
-    showSubmitError("Erreur de connexion. Réessaie.");
+    console.error("submitOutfit:", e);
+    showSubmitError(
+      e.message?.includes("Failed to fetch")
+        ? "Connexion bloquée (CORS ou worker inaccessible). Vérifie le déploiement Cloudflare."
+        : e.message || "Erreur de connexion. Réessaie.",
+    );
   } finally {
     $("#submit-confirm-btn")
       .prop("disabled", false)
