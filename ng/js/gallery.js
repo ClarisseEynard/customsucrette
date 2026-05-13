@@ -3,8 +3,7 @@
  * Utilise le Worker Cloudflare comme backend sécurisé
  */
 
-// ⚠️ Remplace cette URL par l'URL de ton Worker après déploiement
-const WORKER_URL = "https://cs-gallery-worker.clarisse-eynard.workers.dev";
+const WORKER_URL = "https://cs-gallery.clarisse-eynard.workers.dev";
 
 function openSubmitPopup() {
   $("#submit-error").text("");
