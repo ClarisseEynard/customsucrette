@@ -1,232 +1,229 @@
+/**
+ * Custom Sucrette - Gallery
+ * Utilise le Worker Cloudflare comme backend sécurisé
+ */
+
+// ⚠️ Remplace cette URL par l'URL de ton Worker après déploiement
+const WORKER_URL = "https://cs-gallery-worker.clarisse-eynard.workers.dev";
+
+function openSubmitPopup() {
+  $("#submit-error").text("");
+  $("#submit-popup-overlay").addClass("active").css("display", "flex");
+}
+
+function closeSubmitPopup() {
+  $("#submit-popup-overlay").removeClass("active").css("display", "none");
+  $("#submit-error").text("");
+}
+
 $(document).ready(() => {
-    customTheme();
-    userSettings();
-    currentPage("gallery");
-    $("#filter-version").val("NG");
-    loadPosts();
+  customTheme();
+  userSettings();
+  currentPage("gallery");
+  loadGallery();
+
+  $(document).on("click", "#btn-submit-outfit", function (e) {
+    e.preventDefault();
+    openSubmitPopup();
+  });
+
+  $("#submit-popup-overlay").on("click", function (e) {
+    if (e.target === this) closeSubmitPopup();
+  });
+  $("#submit-cancel-btn").on("click", closeSubmitPopup);
+
+  $("#submit-confirm-btn").on("click", submitOutfit);
+
+  $("#submit-pseudo, #submit-code").on("keydown", function (e) {
+    if (e.key === "Enter") submitOutfit();
+  });
+
+  $(".cs-gallery-content").on("click", ".load-outfit-btn", function (e) {
+    e.stopPropagation();
+    const code = $(this).attr("data-code");
+    localStorage.setItem("tempCode", code);
+    const v = code[0] !== "3" ? `v${code[0]}` : "ng";
+    window.open(`../${v}/wardrobe.html`, "_blank");
+  });
+
+  $(".cs-gallery-content").on("click", ".post-found-message", function () {
+    $(this).siblings(".author-message").toggleClass("hidden");
+  });
+
+  $("#page-back").on("click", function () {
+    if ($(this).hasClass("disabled")) return;
+    loadGallery(currentPageNum - 1);
+    $(".cs-gallery-container").scrollTop(0);
+  });
+
+  $("#page-next").on("click", function () {
+    if ($(this).hasClass("disabled")) return;
+    loadGallery(currentPageNum + 1);
+    $(".cs-gallery-container").scrollTop(0);
+  });
 });
 
-const postsPerPage = 32;
+const POSTS_PER_PAGE = 32;
+let currentPageNum = 1;
+let totalPages = 1;
 
-const loadPosts = (page = 0, num = postsPerPage) => {
-    // Obtener filtro
-    let ver = $("#filter-version option:selected").val();
+// ─── Charger et afficher les tenues ───────────────────────────────────────────
 
-    let tags = ver == "all" ? `tagged=submission` : `tagged=${ver}`;
-    let param = `?start=${page*num}&num=${num}&${tags}`;
+const loadGallery = async (page = 1) => {
+  showLoading(true);
+  $(".cs-gallery-content").html("");
 
-    (() => {
-        $("#dynamic-script").html("");
-        $(".cs-gallery-content").html("");
-        let script = document.createElement("script");
+  try {
+    const res = await fetch(`${WORKER_URL}/outfits?page=${page}`);
 
-        script.onload = () => {
+    if (!res.ok) throw new Error("Erreur réseau");
 
-            let tumblr_posts = tumblr_api_read.posts;
+    const data = await res.json();
 
-            if (tumblr_posts.length > 0) {
+    currentPageNum = page;
+    totalPages = data.totalPages || 1;
 
-                for (p = 0; p < tumblr_posts.length; p++) {
-                    $(".cs-gallery-content").append('<div class="post-container"><div class="post-content"><div class="author-info"></div></div></div>');
+    renderOutfits(data.outfits || []);
+  } catch (e) {
+    $(".cs-gallery-content").append(
+      '<div class="empty-gallery">Erreur lors du chargement de la galerie. Veuillez réessayer.</div>',
+    );
+  }
 
-                    if (tumblr_posts[p]["is-submission"]) {
-                        // Submited post
-                        $(".post-content").eq(p).append(`<img src="${tumblr_posts[p]["photo-url-1280"]}">`);
-                        if (tumblr_posts[p].submitter != "Anónimo" && tumblr_posts[p].submitter != "Anonymous") {
-                            $(".author-info").eq(p).append(`enviado por <a href="https://${tumblr_posts[p].submitter}.tumblr.com" target="_blank">@${tumblr_posts[p].submitter}</a>`);
-                        } else {
-                            $(".author-info").eq(p).append(`envoyé par anonyme`);
-                        };
-
-                        // search code
-                        let code = searchCodeInCaption(tumblr_api_read.posts[p]["photo-caption"]);
-                        if (code != null) {
-                            $(".post-content").eq(p).append(`<div class="post-found-code" data-code="${code}" title="Ouvrir dans le dressing"><span class="material-symbols-outlined">link</span></div>`);
-                        };
-
-                        // Caption
-                        let caption = (tumblr_api_read.posts[p]["photo-caption"]).replace(/\n/g,"@#@#@#@#@");
-                        if (caption != "") {
-                            let message = "";
-
-                            if (caption.includes("@#@#@#@#@")) {
-                                let fragment = caption.split("@#@#@#@#@");
-                                for (f = 0; f < fragment.length; f++) {
-                                    let isCode = searchCodeInCaption(fragment[f]);
-                                    let noHTML = $(fragment[f]).text();
-                                    if ((isCode == null || isCode == "") && noHTML != "") {
-                                        message += `<p>${fragment[f]}</p>`;
-                                    };
-                                };
-
-                            } else {
-                                let isCode = searchCodeInCaption(caption);
-                                let noHTML = $(caption).text();
-                                if ((isCode == null || isCode == "") && noHTML != "") {
-                                    message += `<p>${caption}</p>`;
-                                };
-
-                            };
-
-                            if (message != "") {
-                                $(".post-content").eq(p).append(`<div class="author-message hidden">${message}</div>`);
-                                $(".post-content").eq(p).append('<div class="post-found-message"><span class="material-symbols-outlined">chat</span></div>');
-                            };
-                        };
-                        
-                    } else {
-                        // Reblogged post 
-    
-                        // let reblog = $(tumblr_posts[p]["regular-body"]).find("img").eq(0).attr("srcset").split(", ");
-                        // let image = reblog[reblog.length - 1];
-                        // $(".post-content").eq(p).append(`<img src="${image.split(" ")[0]}">`);
-                        // $(".author-info").eq(p).append(`repost de <a href="${tumblr_posts[p]["reblogged-root-url"]}" target="_blank">@${tumblr_posts[p]["reblogged-root-name"]}</a>`);
-                    };
-
-                    // Si es portrait o landscape
-                    isPortrait = tumblr_posts[p].tags.filter(v => v == "portrait");
-                    $(".post-container").eq(p).addClass(isPortrait.length == 1 ? "portrait" : "landscape" );
-                };
-
-            } else {
-                $(".cs-gallery-content").append('<div class="empty-gallery">Aucun élément disponible.</div>');
-            };
-
-            updatePagination();
-
-        };
-
-        script.src = `https://custom-gallery.tumblr.com/api/read/json${param}`;
-        document.getElementById("dynamic-script").appendChild( script );
-
-    })();
-
-
+  showLoading(false);
+  updatePagination();
 };
 
-const showFullImage = (img) => {
-    $("#image-layout img").remove();
-    $("#image-layout").append(`<img src="${img}">`);
-    $("#image-layout").css("display", "flex");
-    $("#image-layout").scrollTop(0);
-};
+const renderOutfits = (outfits) => {
+  if (outfits.length === 0) {
+    $(".cs-gallery-content").append(
+      '<div class="empty-gallery">Aucune tenue à afficher. Soyez le premier à partager !</div>',
+    );
+    return;
+  }
 
-const searchCodeInCaption = (caption) => {
-
-    // Comprobar si tiene código
-    if (caption.includes("1i") || caption.includes("2i") || caption.includes("3i")) {
-
-        // Buscar versión e inicio del código 
-        caption = caption.replace(/</g, "---");
-        caption = caption.replace(/>/g, "---");
-        caption = caption.replace(/ /g, "---");
-        caption = caption.split("---");
-
-        let code = null;
-        for (c = 0; c < caption.length; c++) {
-            if (caption[c].includes("1i") || caption[c].includes("2i") || caption[c].includes("3i")) {
-                code = caption[c].trim();
-
-                let v1 = (code.indexOf("1i") < 0) ? 999999 : code.indexOf("1i");
-                let v2 = (code.indexOf("2i") < 0) ? 999999 : code.indexOf("2i");
-                let v3 = (code.indexOf("3i") < 0) ? 999999 : code.indexOf("3i");
-
-                if (v1 < v2 && v1 < v3) {
-                    // Es V1
-                    code = code.slice(v1);
-                } else if (v2 < v1 && v2 < v3) {
-                    // Es V2
-                    code = code.slice(v2);
-                } else if (v3 < v1 && v3 < v2) {
-                    // Es V3
-                    code = code.slice(v3);
-                } else {
-                    return null;
-                };
-                
-                break;
-            };
-        };
-
-        // Buscar final del código 
-        for (e = (code.length - 1); e > 0; e--) {
-            if (!isNaN(parseInt(code[e]))) {
-                code = code.slice(0,(e + 1));
-                return code;
-            };
-        };
-        // console.log("No se pudo encontrar el código");
-        return null;
-
-    } else {
-        // console.log("No contiene códigos");
-        return null;
-    };
+  outfits.forEach((outfit) => {
+    const date = new Date(outfit.date).toLocaleDateString("es-ES");
+    const card = `
+            <div class="post-container outfit-card">
+                <div class="post-content">
+                    <div class="author-info">enviado por <strong>${escapeHtml(outfit.pseudo)}</strong></div>
+                    <div class="outfit-preview">
+                        <div class="outfit-code-display">${escapeHtml(outfit.code)}</div>
+                    </div>
+                    <div class="outfit-footer">
+                        <span class="outfit-date">${date}</span>
+                        <button class="load-outfit-btn" data-code="${escapeHtml(outfit.code)}">
+                            <span class="material-symbols-outlined">checkroom</span>
+                            Cargar tenue
+                        </button>
+                    </div>
+                    ${
+                      outfit.message
+                        ? `
+                        <div class="post-found-message" title="Ver mensaje">
+                            <span class="material-symbols-outlined">chat</span>
+                        </div>
+                        <div class="author-message hidden">${escapeHtml(outfit.message)}</div>
+                    `
+                        : ""
+                    }
+                </div>
+            </div>`;
+    $(".cs-gallery-content").append(card);
+  });
 };
 
 const updatePagination = () => {
+  $("#page-info").text(currentPageNum);
+  $("#page-info").attr("data-current", currentPageNum);
 
-    // Bloquear pagina anterior ? 
-    let currentPage = parseInt( $("#page-info").attr("data-current") );
-    (currentPage == 0) ? $("#page-back").addClass("disabled") : $("#page-back").removeClass("disabled");
+  currentPageNum <= 1
+    ? $("#page-back").addClass("disabled")
+    : $("#page-back").removeClass("disabled");
 
+  currentPageNum >= totalPages
+    ? $("#page-next").addClass("disabled")
+    : $("#page-next").removeClass("disabled");
 
-    // Bloquear pagina siguiente ?
-    let totalPosts = parseInt( tumblr_api_read["posts-total"] );
-    let totalPostsPerPage = postsPerPage;
-    let initialPost = totalPostsPerPage * currentPage;
-    let nextInitialPost = initialPost + totalPostsPerPage;
-
-    (totalPosts <= nextInitialPost) ? $("#page-next").addClass("disabled") : $("#page-next").removeClass("disabled");
-    (totalPosts <= totalPostsPerPage) ? $(".pagination").hide() : $(".pagination").show();
-
+  totalPages <= 1 ? $(".pagination").hide() : $(".pagination").show();
 };
 
+// ─── Soumettre une tenue ──────────────────────────────────────────────────────
 
-$(function() {
-    $("#filter-version").change(function() {
-        $("#page-info").attr("data-current", 0);
-        $("#page-info").text(1);
-        loadPosts();
+const submitOutfit = async () => {
+  const pseudo = $("#submit-pseudo").val().trim();
+  const code = $("#submit-code").val().trim();
+  const message = $("#submit-message").val().trim();
+
+  if (!pseudo || !code) {
+    showSubmitError("Merci de renseigner le pseudo et le code.");
+    return;
+  }
+
+  $("#submit-confirm-btn").prop("disabled", true).text("Publication...");
+
+  try {
+    const res = await fetch(`${WORKER_URL}/submit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pseudo, code, message }),
     });
 
-    $(".button-gallery-popup").click(function() {
-        $("#wip-layout").fadeOut(200);
-    });
+    const data = await res.json();
 
-    $(".cs-gallery-content").on("click", ".post-content img", function() {
-        let img = $(this).attr("src");
-        showFullImage(img);
-    });
+    if (!res.ok) {
+      showSubmitError(data.error || "Erreur lors de la publication. Réessaie.");
+      return;
+    }
 
-    $(".cs-gallery-content").on("click", ".post-found-message", function() {
-        let clase = $(this).parent().find(".author-message").attr("class")
-        if (clase.includes("hidden")) {
-            $(this).parent().find(".author-message").removeClass("hidden");
-        } else {
-            $(this).parent().find(".author-message").addClass("hidden");
-        };
-    });
+    // Succès
+    $("#submit-pseudo").val("");
+    $("#submit-code").val("");
+    $("#submit-message").val("");
+    $("#submit-error").text("");
+    closeSubmitPopup();
+    showSuccessToast("Tenue publiée ! 🎉");
 
-    $(".cs-gallery-content").on("click", ".post-found-code", function() {
-        let code = $(this).attr("data-code");
-        localStorage.setItem("tempCode", code);
-        let v = code[0] != 3 ? `v${code[0]}` : "ng";
-        window.open(`../${v}/wardrobe.html`, "_blank");
-    });
+    // Recharger la première page
+    loadGallery(1);
+  } catch (e) {
+    showSubmitError("Erreur de connexion. Réessaie.");
+  } finally {
+    $("#submit-confirm-btn")
+      .prop("disabled", false)
+      .html(
+        '<span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">send</span> Publier',
+      );
+  }
+};
 
-    $("#image-layout").click(function() {
-        $(this).fadeOut(100);
-    });
-    
-    $(".page").click(function() {
-        let page = parseInt( $("#page-info").attr("data-current") );
-        let goto = $(this).attr("id").split("-")[1];
-        (goto == "back") ? page-- : page++;
-        
-        $("#page-info").attr("data-current", page);
-        $("#page-info").text(page + 1);
-        loadPosts(page);
-    });
+// ─── UI helpers ───────────────────────────────────────────────────────────────
 
-});
+const showLoading = (show) => {
+  show ? $("#loading-layout").addClass("show") : $("#loading-layout").removeClass("show");
+};
+
+const showSubmitError = (msg) => {
+  $("#submit-error").text(msg);
+};
+
+const showSuccessToast = (msg) => {
+  $("body").append(`<div class="gallery-toast">${msg}</div>`);
+  setTimeout(
+    () =>
+      $(".gallery-toast").fadeOut(400, function () {
+        $(this).remove();
+      }),
+    2500,
+  );
+};
+
+const escapeHtml = (str) => {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+};
+

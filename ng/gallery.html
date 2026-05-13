@@ -224,26 +224,12 @@
             </div>
 
             <div class="gallery-submit">
-              <a href="https://custom-gallery.tumblr.com/submit" target="_blank">
-                <div class="gallery-submit-button">Envoyer une contribution</div>
+              <a id="btn-submit-outfit" href="#">
+                <div class="gallery-submit-button">Partager une tenue</div>
                 <span class="material-symbols-outlined">arrow_forward</span>
               </a>
             </div>
-            <div class="gallery-alternative">
-              <a href="https://custom-gallery.tumblr.com/tagged/submission" target="_blank">
-                <div class="gallery-submit-button">Voir sur Tumblr</div>
-              </a>
-            </div>
           </div>
-
-          <!-- <div id="wip-layout">
-                    <div id="wip-popup">
-                        <h2>Zone en construction !</h2>
-                        <p>Cette section n'est pas encore terminée.<br>
-                        Visite <a href="https://custom-gallery.tumblr.com/post/752339554562916352/customgallery" target="_blank">Custom!Gallery</a> pour plus d'informations.</p>
-                        <div class="button-container"><div class="button-gallery-popup">Compris !</div></div>
-                    </div>
-                </div> -->
 
           <div class="cs-gallery-content"></div>
           <div class="pagination">
@@ -260,6 +246,45 @@
         </section>
       </div>
     </asng-root>
+
+    <div id="submit-popup-overlay">
+      <div id="submit-popup">
+        <h2>Partager une tenue</h2>
+        <p class="submit-hint">
+          Ta tenue sera visible par toute la communauté. Les tenues sont partagées publiquement.
+        </p>
+
+        <div class="submit-field">
+          <label for="submit-pseudo">Pseudo *</label>
+          <input type="text" id="submit-pseudo" placeholder="Ton pseudo ou surnom" maxlength="30" />
+        </div>
+
+        <div class="submit-field">
+          <label for="submit-code">Code de tenue *</label>
+          <input type="text" id="submit-code" placeholder="Colle ton code ici (ex : 3i...)" />
+        </div>
+
+        <div class="submit-field">
+          <label for="submit-message">Message (optionnel)</label>
+          <textarea
+            id="submit-message"
+            rows="3"
+            placeholder="Un petit commentaire sur ta tenue..."
+            maxlength="200"
+          ></textarea>
+        </div>
+
+        <div id="submit-error"></div>
+
+        <div class="submit-actions">
+          <button id="submit-cancel-btn" type="button">Annuler</button>
+          <button id="submit-confirm-btn" type="button">
+            <span class="material-symbols-outlined">send</span>
+            Publier
+          </button>
+        </div>
+      </div>
+    </div>
 
     <div id="image-layout"></div>
 
