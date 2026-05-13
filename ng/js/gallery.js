@@ -35,13 +35,13 @@ const loadPosts = (page = 0, num = postsPerPage) => {
                         if (tumblr_posts[p].submitter != "Anónimo" && tumblr_posts[p].submitter != "Anonymous") {
                             $(".author-info").eq(p).append(`enviado por <a href="https://${tumblr_posts[p].submitter}.tumblr.com" target="_blank">@${tumblr_posts[p].submitter}</a>`);
                         } else {
-                            $(".author-info").eq(p).append(`enviado por anónimo`);
+                            $(".author-info").eq(p).append(`envoyé par anonyme`);
                         };
 
                         // search code
                         let code = searchCodeInCaption(tumblr_api_read.posts[p]["photo-caption"]);
                         if (code != null) {
-                            $(".post-content").eq(p).append(`<div class="post-found-code" data-code="${code}" title="Abrir en el vestidor"><span class="material-symbols-outlined">link</span></div>`);
+                            $(".post-content").eq(p).append(`<div class="post-found-code" data-code="${code}" title="Ouvrir dans le dressing"><span class="material-symbols-outlined">link</span></div>`);
                         };
 
                         // Caption
@@ -89,7 +89,7 @@ const loadPosts = (page = 0, num = postsPerPage) => {
                 };
 
             } else {
-                $(".cs-gallery-content").append('<div class="empty-gallery">No hay elementos disponibles.</div>');
+                $(".cs-gallery-content").append('<div class="empty-gallery">Aucun élément disponible.</div>');
             };
 
             updatePagination();

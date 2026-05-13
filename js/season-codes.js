@@ -127,11 +127,11 @@ function drawPopUpCode(code) {
 
     $(".overlay-container").append('<div class="overlay-popup code-popup"><div class="button-close"><span class="fa fa-times"></span></div></div>');
     $(".overlay-popup").append('<div id="code-panel"></div>');
-    $("#code-panel").append('<div class="title">¡Se ha generado tu código!</div>');
-    $("#code-panel").append('<p>Utiliza este código para volver a cargar a tu Sucrette más tarde: </p>');
+    $("#code-panel").append('<div class="title">Ton code a été généré !</div>');
+    $("#code-panel").append('<p>Utilise ce code pour recharger ta Sucrette plus tard : </p>');
     $("#code-panel").append('<textarea readonly class="code-container"></textarea>');
     $(".code-container").val(code);
-    $("#code-panel").append('<div class="copy-code">Copiar código</div>');
+    $("#code-panel").append('<div class="copy-code">Copier le code</div>');
 
     $("html").css("overflow", "hidden");
 };
@@ -146,8 +146,8 @@ function copyCode() {
 
     if (!(window.location.href).includes("/ng/")) {
         var currentButton = $(".copy-code").text();
-        if (currentButton == "Copiar código") {
-            $(".copy-code").text("¡Se ha copiado el código!");
+        if (currentButton == "Copier le code") {
+            $(".copy-code").text("Le code a été copié !");
             $(".copy-code").addClass("active");
         };
     };
@@ -185,7 +185,7 @@ function saveTempCode() {
             };
 
         } else {
-            alert("El código no es correcto.");
+            alert("Le code n'est pas correct.");
         };
     };
 }
@@ -224,7 +224,7 @@ function checkAndGetTempCode() {
             };
 
         } else {
-            alert("El código no es correcto.");
+            alert("Le code n'est pas correct.");
         };
 
         return false;
@@ -349,7 +349,7 @@ function loadCode(code = null) {
             drawPanel();
 
         } catch (e) {
-            alert("El código no es correcto.");
+            alert("Le code n'est pas correct.");
             $(".code-input input").val("");
         };
 
@@ -467,7 +467,7 @@ function loadCode(code = null) {
             };
 
         } catch(e) {
-            alert("El código no es correcto.");
+            alert("Le code n'est pas correct.");
         }; 
     };
 

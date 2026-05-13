@@ -109,7 +109,7 @@ function cargarRopa(pag = 0, subGroup = null, pagsub = 0) {
                     $(".hanger-container").eq(elmntLooper).append('<div class="hanger clickable"><div class="item"><img></div></div>');
                 }
                 $(".declinable-hanger").eq(elmntLooper).attr("data-groupid", grupos[a].groupId);
-                $(".hanger.clickable").eq(elmntLooper).append('<div class="declinations"><div class="panel"><div class="counter"><div class="declination-picto"></div><div> 1/' + leader.length + ' </div></div><div class="text"><div class="text-content"><p><span>Ver todos los colores</span></p></div></div></div></div>');
+                $(".hanger.clickable").eq(elmntLooper).append('<div class="declinations"><div class="panel"><div class="counter"><div class="declination-picto"></div><div> 1/' + leader.length + ' </div></div><div class="text"><div class="text-content"><p><span>Voir toutes les couleurs</span></p></div></div></div></div>');
             } else {
                 var seleccionado = customSucrette.clothe.filter(v => {return v.src == leader[0].src});
                 var cSkin = customSucrette.avatar.customSkin;
@@ -957,15 +957,15 @@ $(function() {
         $(".save-popup").addClass("hidden");
         // Guardar Sucrette
         $("body").append('<div class="overlay-container"><div class="overlay navigation-menu"></div></div>');
-        $(".overlay.navigation-menu").append('<a class="overlay-button-save size-small">Pequeño</a>');      // 410 x 700
-        $(".overlay.navigation-menu").append('<a class="overlay-button-save size-medium">Mediano</a>');     // 656 x 1120
-        $(".overlay.navigation-menu").append('<a class="overlay-button-save size-big active">Grande</a>');  // 820 x 1400
+        $(".overlay.navigation-menu").append('<a class="overlay-button-save size-small">Petit</a>');      // 410 x 700
+        $(".overlay.navigation-menu").append('<a class="overlay-button-save size-medium">Moyen</a>');     // 656 x 1120
+        $(".overlay.navigation-menu").append('<a class="overlay-button-save size-big active">Grand</a>');  // 820 x 1400
         $(".overlay.navigation-menu").append('<a class="overlay-button-save config" style="left: 20px;"><span class="fa fa-gear"></span></a>');  // boton config
 
         $(".overlay-container").append('<div class="overlay-popup"></div>');
         $(".overlay-container .overlay-popup").append('<div class="button-close"><span class="fa fa-times"></span></div>');
         $(".overlay-container .overlay-popup").append('<div id="overlay-popup-config"><div> <div class="inner"></div> </div></div>');
-        $("#overlay-popup-config div .inner").append('<p>Cambiar color de fondo:</p><p><div id="color-picker-container"><input id="color-picker" type="color"></div></p>');
+        $("#overlay-popup-config div .inner").append('<p>Changer la couleur de fond :</p><p><div id="color-picker-container"><input id="color-picker" type="color"></div></p>');
 
         $("html").css("overflow", "hidden");
 
@@ -1086,7 +1086,7 @@ $(function() {
     $(".search input").on("input", function() {
         if ($(this).val() != "") {
             $(".category.selected").removeClass("selected");
-            $(".category-name").text("Mostrando resultados");
+            $(".category-name").text("Résultats de recherche");
         } else {
             $("#category-Wig").addClass("selected");
             var nombre = categoriaNombre();
@@ -1151,28 +1151,28 @@ function categoriaNombre() {
     var elmnt = $(".category.selected");
     var name = elmnt.attr("id");
 
-    if (name == "category-Wig") return "Pelucas";
-    if (name == "category-HairAccessory") return "Sombreros";
-    if (name == "category-Jacket") return "Chaquetas";
-    if (name == "category-Shirt") return " Partes de arriba";
-    if (name == "category-Underwears") return " Ropa interior";
-    if (name == "category-Pants") return "Pantalones";
-    if (name == "category-Socks") return "Calcetines";
-    if (name == "category-Shoes") return "Zapatos";
-    if (name == "category-Necklace") return "Collares";
-    if (name == "category-Dress") return "Vestidos";
-    if (name == "category-Accessory") return "Complementos";
-    if (name == "category-Purse") return "Bolsos";
-    if (name == "category-Skin") return "Pieles";
+    if (name == "category-Wig") return "Perruques";
+    if (name == "category-HairAccessory") return "Accessoires pour cheveux";
+    if (name == "category-Jacket") return "Vestes";
+    if (name == "category-Shirt") return "Tops";
+    if (name == "category-Underwears") return "Sous-vêtements";
+    if (name == "category-Pants") return "Pantalons";
+    if (name == "category-Socks") return "Chaussettes";
+    if (name == "category-Shoes") return "Chaussures";
+    if (name == "category-Necklace") return "Colliers";
+    if (name == "category-Dress") return "Robes";
+    if (name == "category-Accessory") return "Accessoires";
+    if (name == "category-Purse") return "Sacs à main";
+    if (name == "category-Skin") return "Peaux";
 
-    if (name == "category-hairStyle") return "Mi peinado";
-    if (name == "category-hairColor") return "Color de pelo";
-    if (name == "category-eyeType") return "Forma de los ojos";
-    if (name == "category-eyeColor") return "Color de ojos";
-    if (name == "category-eyebrow") return "Forma de las cejas";
-    if (name == "category-mouth") return "Forma y color de la boca";
-    if (name == "category-makeUp") return "Maquillaje";
-    if (name == "category-skinColor") return "Tonos de piel";
+    if (name == "category-hairStyle") return "Coiffure";
+    if (name == "category-hairColor") return "Couleur des cheveux";
+    if (name == "category-eyeType") return "Forme des yeux";
+    if (name == "category-eyeColor") return "Couleur des yeux";
+    if (name == "category-eyebrow") return "Forme des sourcils";
+    if (name == "category-mouth") return "Forme et couleur de la bouche";
+    if (name == "category-makeUp") return "Maquillage";
+    if (name == "category-skinColor") return "Couleur de peau";
 };
 
 function checkType() {
@@ -1197,7 +1197,7 @@ function checkMaxSelect(categoria) {
         if (count.length < cat[0].max && cat[0].max != "undefined") { return "select"; } 
         else if (count.length == cat[0].max) { return "block"; }
         else { return "select"};
-    } else if (busca == "Mostrando resultados") {
+    } else if (busca == "Résultats de recherche") {
         var sub = $(".showcase").attr("data-groupid");
         if ( sub !== undefined) {
             if (cat[0].type == "replace") return "replace";

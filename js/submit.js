@@ -30,32 +30,28 @@ function drawPage(type) {
 
 	if (type == "general") {
 		$("#page-dynamic-submit").append('<div class="section-page info"></div>');
-		$(".section-page.info").append('<div style="position:  relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>¡Ayúdame a completar el armario!</span></div></div></h3></div>');
-		$(".section-page.info").append('<div class="page-main-content"><div class="card"><p>Como bien sabemos, el vestidor apenas inicia y por ello aún faltan varias prendas. Actualmente se buscan los conjuntos de episodios (indicados en la pestaña "Se busca") y algunos regalos del hada que no han sido indicados.</p><p>Si tienes alguna prenda que actualmente no está en el vestidor, te invito a completar el formulario ubicado en la pestaña con el mismo nombre.</p><p>El formulario está abierto para que organices toda la información como mejor te parezca, solo asegúrate que la información sea correcta.</p></div></div>');
+		$(".section-page.info").append('<div style="position:  relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Aide-moi à compléter le dressing !</span></div></div></h3></div>');
+		$(".section-page.info").append("<div class=\"page-main-content\"><div class=\"card\"><p>Comme vous le savez, le dressing vient à peine de démarrer et il manque encore plusieurs vêtements. On recherche actuellement les tenues d'épisodes (indiquées dans l'onglet « On recherche ») et certains cadeaux de la fée non encore répertoriés.</p><p>Si tu as un vêtement qui n'est pas encore dans le dressing, je t'invite à remplir le formulaire dans l'onglet du même nom.</p><p>Le formulaire est ouvert pour que tu organises les informations comme tu le souhaites ; assure-toi simplement qu'elles sont correctes.</p></div></div>");
 
 		$("#page-dynamic-submit").append('<div class="section-page requirement"></div>');
-		$(".section-page.requirement").append('<div style="position: relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Información requerida</span></div></div></h3></div>');
-		$(".section-page.requirement").append('<div class="page-main-content"><div class="card"><ul><li>Temporada a la que pertenece: Instituto / Universidad / Amor</li><li>Nombres de las prendas.</li><li>Categorías de las prendas.</li><li>Enlaces de sus variaciones de colores.</li></ul></div></div>');
+		$(".section-page.requirement").append('<div style="position: relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Informations requises</span></div></div></h3></div>');
+		$(".section-page.requirement").append('<div class="page-main-content"><div class="card"><ul><li>Saison : Lycée / Université / Amour</li><li>Noms des vêtements.</li><li>Catégories des vêtements.</li><li>Liens vers les variations de couleurs.</li></ul></div></div>');
 
 		$(".tab").eq(0).addClass("active");
 
 	} else if (type == "form") {
 		$("#page-dynamic-submit").append('<div class="section-page form"></div>');
-		$(".section-page.form").append('<div style="position:  relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Completa el formulario</span></div></div></h3></div>');
-		$(".section-page.form").append('<div class="page-main-content" style="text-align: center;"><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfQlhXLEa37uIz2UxDZhwVOoGtgzXpEJr0ylJZbnK2xRU2LqA/viewform?embedded=true" width="640" height="500" frameborder="0" marginheight="0" marginwidth="0">Cargando…</iframe></div>');
+		$(".section-page.form").append('<div style="position:  relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Remplis le formulaire</span></div></div></h3></div>');
+		$(".section-page.form").append('<div class="page-main-content" style="text-align: center;"><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfQlhXLEa37uIz2UxDZhwVOoGtgzXpEJr0ylJZbnK2xRU2LqA/viewform?embedded=true" width="640" height="500" frameborder="0" marginheight="0" marginwidth="0">Chargement…</iframe></div>');
 
 		$(".tab").eq(2).addClass("active");
 
 	} else if (type == "wanted") {
 		$("#page-dynamic-submit").append('<div class="section-page wanted"></div>');
 		$(".tab").eq(1).addClass("active");
-		
-		// ===========================================
-		// Season 1
-		// ===========================================
 
-		$(".section-page.wanted").append('<div style="position:  relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Conjuntos de Instituto</span></div></div></h3></div>');
-		$(".section-page.wanted").append('<div class="page-main-content"><div class="card"><p>Se buscan todas las prendas y accesorios de estos conjuntos, solo en estos colores (aporta solo los enlaces de las imagenes):</p><div class="sets s1"></div></div></div>');
+		$(".section-page.wanted").append('<div style="position:  relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Tenues du lycée</span></div></div></h3></div>');
+		$(".section-page.wanted").append('<div class="page-main-content"><div class="card"><p>On recherche tous les vêtements et accessoires de ces tenues, uniquement dans ces couleurs (fournis uniquement les liens des images) :</p><div class="sets s1"></div></div></div>');
 
 		var arrayS1 = [];
 
@@ -66,17 +62,13 @@ function drawPage(type) {
 				name = name.replace(".png", "");
 				name = name.replace(/_/g, " ");
 				$(".sets.s1").append('<a href="' + arrayS1[i] + '" target="_blank" title="' + name + '"><img style="width: 20%;" src="' + arrayS1[i] + '"></a>');
-			};	
+			};
 		} else {
-			$(".card p").eq(0).html('<i>De momento nada.</i>');
+			$(".card p").eq(0).html('<i>Rien pour le moment.</i>');
 		}
 
-		// ===========================================
-		// Season 2
-		// ===========================================
-
-		$(".section-page.wanted").append('<div style="position:  relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Conjuntos de Universidad</span></div></div></h3></div>');
-		$(".section-page.wanted").append('<div class="page-main-content"><div class="card"><p>Se buscan todas las prendas y accesorios de estos conjuntos, solo en estos colores (aporta solo los enlaces de las imagenes):</p><div class="sets s2"></div></div></div>');
+		$(".section-page.wanted").append("<div style=\"position:  relative; display: inline-block;\"><h3><div class=\"paper-clip-title\"><div class=\"title-container\"><div class=\"trombone\"></div><span>Tenues de l'université</span></div></div></h3></div>");
+		$(".section-page.wanted").append('<div class="page-main-content"><div class="card"><p>On recherche tous les vêtements et accessoires de ces tenues, uniquement dans ces couleurs (fournis uniquement les liens des images) :</p><div class="sets s2"></div></div></div>');
 
 		var arrayS2 = [];
 
@@ -87,18 +79,13 @@ function drawPage(type) {
 				name = name.replace(".png", "");
 				name = name.replace(/_/g, " ");
 				$(".sets.s2").append('<a href="' + arrayS2[i] + '" target="_blank" title="' + name + '"><img style="width: 20%;" src="' + arrayS2[i] + '"></a>');
-			};	
+			};
 		} else {
-			$(".card p").eq(1).html('<i>De momento nada.</i>');
-		};
+			$(".card p").eq(1).html('<i>Rien pour le moment.</i>');
+		}
 
-
-		// ===========================================
-		// Season 3
-		// ===========================================
-
-		$(".section-page.wanted").append('<div style="position:  relative; display: inline-block;"><h3><div class="paper-clip-title"><div class="title-container"><div class="trombone"></div><span>Conjuntos de Amor</span></div></div></h3></div>');
-		$(".section-page.wanted").append('<div class="page-main-content"><div class="card"><p>Solo se buscan las prendas en estos colores específicos:</p><div class="sets s3"></div></div></div>');
+		$(".section-page.wanted").append("<div style=\"position:  relative; display: inline-block;\"><h3><div class=\"paper-clip-title\"><div class=\"title-container\"><div class=\"trombone\"></div><span>Tenues d'Amour</span></div></div></h3></div>");
+		$(".section-page.wanted").append('<div class="page-main-content"><div class="card"><p>On recherche uniquement les vêtements dans ces couleurs précises :</p><div class="sets s3"></div></div></div>');
 
 		var arrayS3 = [];
 
@@ -109,10 +96,9 @@ function drawPage(type) {
 				name = name.replace(".png", "");
 				name = name.replace(/_/g, " ");
 				$(".sets.s3").append('<a href="' + arrayS3[i] + '" target="_blank" title="' + name + '"><img style="width: 20%;" src="' + arrayS3[i] + '"></a>');
-			};	
+			};
 		} else {
-			$(".card p").eq(2).html('<i>De momento nada.</i>');
-			//$(".card p").eq(2).html('Se buscan TODOS los conjuntos de episodios (del 8 al 15) en todos los colores. Será necesario aportarlos con sus nombres, categorías y enlaces.');
+			$(".card p").eq(2).html('<i>Rien pour le moment.</i>');
 		};
 	};
 };
@@ -127,13 +113,13 @@ $(function() {
 
 			var string = $(this).find("span").text();
 
-			if (string == "General") {
+			if (string == "Général") {
 				history.pushState(null, "", "?q=general");
 				drawPage("general");
-			} else if (string == "Formulario") {
+			} else if (string == "Formulaire") {
 				history.pushState(null, "", "?q=form");
 				drawPage("form");
-			} else if (string == "Se busca") {
+			} else if (string == "On recherche") {
 				history.pushState(null, "", "?q=wanted");
 				drawPage("wanted");
 			};

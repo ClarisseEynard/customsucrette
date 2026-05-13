@@ -34,7 +34,7 @@ $(document).ready(function() {
 
 async function tempWM(type) {
     if (type == "load") {
-        alert("Debido a un concurso oficial en curso, se ha añadido una marca de agua temporal para evitar el uso del vestidor en el mismo.\nDisculpen las molestias.");
+        alert("En raison d'un concours officiel en cours, un filigrane temporaire a été ajouté pour éviter l'utilisation du dressing dans ce cadre.\nMerci de votre compréhension.");
         $("#asng-avatar").append('<img class="temp-wm" src="./assets/wm.png">');
 
     } else if (type == "save") {
@@ -198,14 +198,14 @@ async function drawCategory(c = "top", declination = null) {
         $("#asng-avatar-item-list-panel .items-container").html("");
         $("#asng-avatar-item-list-panel .items-container").append('<div id="expressions-menu"></div>');
         $("#expressions-menu")
-            .append('<div class="show-presets"><h2>Predefinidas</h2></div>')
-            .append('<div class="show-custom"><h2>Custom</h2></div>');
+            .append('<div class="show-presets"><h2>Prédéfinies</h2></div>')
+            .append('<div class="show-custom"><h2>Personnalisées</h2></div>');
         $("#asng-avatar-item-list-panel .items-container").append('<div id="expressions-container"></div>');
         drawExpressions("preset");
 
     } else {
         $("#asng-avatar-item-list-panel .items-container").html("");
-        $("asng-cloth-list-panel").append('<div class="empty"><img class="taki" src="https://www.corazondemelon-newgen.es/assets/taki/box.png" /><p>No hay elementos en esta categoría.</p></div>');
+        $("asng-cloth-list-panel").append('<div class="empty"><img class="taki" src="https://www.corazondemelon-newgen.es/assets/taki/box.png" /><p>Aucun élément dans cette catégorie.</p></div>');
     };
 
     if (declination != null) {
@@ -1272,7 +1272,7 @@ $(function () {
             // Input filter on
             $(this).removeClass("empty");
             $(".filter-by-name-input .reset").css("opacity", 1).css("visibility", "visible");
-            $(".current-category").text("Filtrado");
+            $(".current-category").text("Filtré");
             $(".category-list-item").removeClass("current");
             drawCategory();
 
@@ -1736,7 +1736,7 @@ $(function () {
             if (inp.length == 0) {
                 $(this).parent().css("width", "calc(100% - 390px)");
     
-                $(this).parent().append('<textarea class="code-container" type="text" readonly></textarea><div id="generated-code-info">¡Código copiado!</div>');
+                $(this).parent().append('<textarea class="code-container" type="text" readonly></textarea><div id="generated-code-info">Code copié !</div>');
                 $("textarea").delay(100).fadeIn(200);
                 $(".code-container").val(generateCode("ng"));
             };
@@ -1846,34 +1846,34 @@ $(function () {
 });
 
 function getCategoryName(arg) {
-    if (arg == "hat") return "Sombreros";
-    if (arg == "wig") return "Pelucas";
-    if (arg == "eyebrows") return "Cejas";
-    if (arg == "faceAccessory") return "Accesorios cara";
-    if (arg == "earring") return "Pendientes";
-    if (arg == "expression") return "Expresiones";
-    if (arg == "makeup") return "Maquillaje";
-    if (arg == "eyes") return "Ojos";
-    if (arg == "mouth") return "Bocas";
-    if (arg == "neckAccessory") return "Collares";
-    if (arg == "top") return "Partes de arriba";
-    if (arg == "dress") return "Vestidos";
-    if (arg == "jacket") return "Chaquetas";
-    if (arg == "waist") return "Cinturones";
-    if (arg == "underwear") return "Ropa interior";
-    if (arg == "gloves") return "Guantes";
-    if (arg == "bag") return "Bolsos";
-    if (arg == "armAccessory") return "Joyas brazo";
-    if (arg == "handNailPolish") return "Esmalte manos";
-    if (arg == "pants") return "Pantalones";
-    if (arg == "skirt") return "Faldas";
-    if (arg == "shoes") return "Zapatos";
-    if (arg == "socks") return "Calcetines";
-    if (arg == "legAccessory") return "Joyas piernas";
-    if (arg == "footNailPolish") return "Esmalte pies";
-    if (arg == "skin") return "Pieles";
-    if (arg == "tattoo") return "Tatuajes";
-    if (arg == "other") return "Otros";
+    if (arg == "hat") return "Chapeaux";
+    if (arg == "wig") return "Perruques";
+    if (arg == "eyebrows") return "Sourcils";
+    if (arg == "faceAccessory") return "Accessoires visage";
+    if (arg == "earring") return "Boucles d'oreilles";
+    if (arg == "expression") return "Expressions";
+    if (arg == "makeup") return "Maquillage";
+    if (arg == "eyes") return "Yeux";
+    if (arg == "mouth") return "Bouches";
+    if (arg == "neckAccessory") return "Colliers";
+    if (arg == "top") return "Hauts";
+    if (arg == "dress") return "Robes";
+    if (arg == "jacket") return "Vestes";
+    if (arg == "waist") return "Ceintures";
+    if (arg == "underwear") return "Sous-vêtements";
+    if (arg == "gloves") return "Gants";
+    if (arg == "bag") return "Sacs";
+    if (arg == "armAccessory") return "Bijoux bras";
+    if (arg == "handNailPolish") return "Vernis mains";
+    if (arg == "pants") return "Pantalons";
+    if (arg == "skirt") return "Jupes";
+    if (arg == "shoes") return "Chaussures";
+    if (arg == "socks") return "Chaussettes";
+    if (arg == "legAccessory") return "Bijoux jambes";
+    if (arg == "footNailPolish") return "Vernis pieds";
+    if (arg == "skin") return "Teints";
+    if (arg == "tattoo") return "Tatouages";
+    if (arg == "other") return "Autres";
 };
 
 function composeHangerUrl (id, e, type = "cloth", s = hr) {
